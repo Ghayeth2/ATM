@@ -49,7 +49,11 @@ public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHan
                 }
             }
 
+        }else{
+            response.sendRedirect("/atm/login?notFound");
+            return;
         }
+
 
         super.setDefaultFailureUrl("/atm/login?failure");
         super.onAuthenticationFailure(request, response, exception);

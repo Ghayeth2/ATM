@@ -49,8 +49,9 @@ public class SecurityConfig  {
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests()
                 .requestMatchers(
+                        // The problem was from the security chain. I missed mentioning POST URL
                         "/atm/registration", "/atm/registration?notMatched",
-                        "/atm/registration?success", "/atm**", "/assets/js/**",
+                        "/atm/registration?success","/atm/user","/atm", "/assets/js/**",
                         "/assets/css/**", "/assets/img/**", "/assets/fonts/**",
                         "/assets/modules/**", "/public/**", "/atm/login"
                 ).permitAll()

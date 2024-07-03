@@ -23,11 +23,16 @@
                                 <!--Error message-->
                                 <!--Failure message-->
                                 <div th:if="${param.failure}">
-                                    <div class="alert alert-danger" >
+                                    <div class="alert alert-danger">
                                         [[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
                                     </div>
                                 </div>
-                                <!--Failure message-->
+                                <!--notFound message--> <!--Failure message-->
+                                <div th:if="${param.notFound}">
+                                    <div class="alert alert-danger" th:text="'Email is not found, try sign up.'">
+                                    </div>
+                                </div>
+                                <!--notFound message-->
                                 <!--Logout message-->
                                 <div th:if="${param.logout}">
                                     <div class="alert alert-info" th:text="'You have been logged out.'"></div>

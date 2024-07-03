@@ -15,7 +15,7 @@ import java.util.List;
 @Data @Entity @Table(name = "users")
 @NamedEntityGraph @Builder
 @Log4j2 @NoArgsConstructor
-public class User extends BaseEntity {
+public class User extends IntermidateBaseEntity {
     @Column(name = "first_name", length = 30, nullable = false)
     private String firstName;
     @Column(name = "last_name", length = 30, nullable = false)

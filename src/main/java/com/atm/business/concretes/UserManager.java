@@ -1,14 +1,16 @@
 package com.atm.business.concretes;
 
-import com.atm.business.abstracts.UserRegister;
 import com.atm.business.abstracts.UserService;
 import com.atm.core.bean.PasswordEncoderBean;
+import com.atm.core.exception.EmailExistsException;
 import com.atm.core.utils.converter.DtoEntityConverter;
+import com.atm.core.utils.stringsOPS.SlugGenerator;
 import com.atm.dao.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
+import com.atm.core.utils.validators.UserNameExistsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
     service interface. just the one.
  */
 @Service
-public class UserManager implements UserService, UserDetailsService, UserRegister {
+public class UserManager implements UserService, UserDetailsService {
     private UserDao userDao;
     private DtoEntityConverter converter;
     private PasswordEncoderBean passwordEncoder;
@@ -48,22 +49,31 @@ public class UserManager implements UserService, UserDetailsService, UserRegiste
     }
 
     @Override
-    public void save(UserDto userDto) {
+    public String save(UserDto userDto) throws EmailExistsException {
+        if (new UserNameExistsValidator(userDao).validate(userDto.getEmail()))
+            throw new EmailExistsException("Username is already existed, try login in");
         User user = (User) converter.dtoToEntity(userDto, new User());
         // Encrypting password
         user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
         user.setAccountNonLocked(1);
+        // if no users, first role is Admin
+        if (userDao.count() == 0)
+            user.setRoles(List.of(new Role("ROLE_ADMIN")));
+        else
+            user.setRoles(List.of(new Role("ROLE_USER")));
+        user.setSlug(new SlugGenerator().slug(userDto.getEmail()));
         userDao.save(user);
+        return "User saved";
     }
 
     @Override
-    public void update(UserDto userDto, Long id) {
-
+    public String update(UserDto userDto, Long id) {
+        return "User updated";
     }
 
     @Override
-    public void delete(Long id) {
-
+    public String delete(Long id) {
+        return "User deleted";
     }
 
     @Override
