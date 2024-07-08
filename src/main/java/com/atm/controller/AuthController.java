@@ -40,7 +40,7 @@ public class AuthController {
             log.error("An error occurred!");
             return "layout/signup";
         }
-        log.info("well is it being called??");
+//        log.info("well is it being called??");
         log.info("Success " + userDto);
         userService.save(userDto);
         redirectAttributes.addFlashAttribute("success",

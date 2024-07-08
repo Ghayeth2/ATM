@@ -3,10 +3,12 @@ package com.atm.business.concretes;
 import com.atm.business.abstracts.UserService;
 import com.atm.core.bean.PasswordEncoderBean;
 import com.atm.core.exception.EmailExistsException;
+import com.atm.core.exception.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.core.utils.stringsOPS.SlugGenerator;
 import com.atm.dao.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
+import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
@@ -67,8 +69,20 @@ public class UserManager implements UserService, UserDetailsService {
     }
 
     @Override
-    public String update(UserDto userDto, Long id) {
-        return "User updated";
+    public UserDto findByEmail(String email) {
+        return (UserDto) converter.entityToDto(
+                userDao.findByEmail(email), UserDto.class
+        );
+    }
+
+    @Override
+    public String update(UserDetailsDto userDto, String slug) throws Exception {
+        User user = userDao.findByEmail(userDto.getEmail());
+        if (!passwordEncoder.passwordEncoder().matches(userDto.getPassword(), user.getPassword()))
+            throw new PasswordMisMatchException("Provided password doesn't match current password!");
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        return userDao.save(user)+" your details are updated";
     }
 
     @Override

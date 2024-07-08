@@ -2,6 +2,8 @@ package com.atm.model.dtos;
 
 import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Getter
+@Data
 public class CustomUserDetailsDto implements UserDetails {
     private User user;
 
@@ -61,7 +64,4 @@ public class CustomUserDetailsDto implements UserDetails {
         return true;
     }
 
-    public User getUser(){
-        return this.user;
-    }
 }

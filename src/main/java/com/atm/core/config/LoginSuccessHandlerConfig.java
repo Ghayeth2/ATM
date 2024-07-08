@@ -30,7 +30,7 @@ public class LoginSuccessHandlerConfig implements AuthenticationSuccessHandler{
 
         CustomUserDetailsDto userDetails =  (CustomUserDetailsDto) authentication.getPrincipal();
         User user = userDetails.getUser();
-        log.info("user email from the success login handler: "+user.getEmail());
+        log.info("user email from the success login handler: "+user);
         if (user.getFailedAttempts() > 0) {
             userAccount.resetFailedAttempts(user.getEmail());
         }
