@@ -12,14 +12,13 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor
 @AllArgsConstructor @Builder
 public class UserDetailsDto {
-    @Pattern(regexp = "^[a-zA-z]{3,25}$", message = "First name should contain only alphabetic characters" +
-            "and within 3 - 25 characters.")
-    @NotEmpty(message = "This field is required!")
+    @Pattern(regexp = "^[a-zA-z]{3,25}$", message = "{valid.first.name.regex}")
+    @NotEmpty(message = "{valid.not.empty}")
     private String firstName;
     @Pattern(regexp = "^[a-zA-Z ]{3,25}$",
-            message = "Last name should only contain alphabetic letters, spaces, and be between 3 and 25 characters long")
+            message = "{valid.last.name.regex}")
 
-    @NotEmpty(message = "This field is required!")
+    @NotEmpty(message = "{valid.not.empty}")
     private String lastName;
     private String email;
     private String password;

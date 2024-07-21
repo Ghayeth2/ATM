@@ -13,6 +13,7 @@ import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
 import com.atm.core.utils.validators.UserNameExistsValidator;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,23 +38,19 @@ import java.util.stream.Collectors;
     another class that won't implement all methods in our
     service interface. just the one.
  */
+@AllArgsConstructor
 @Service
 public class UserManager implements UserService, UserDetailsService {
     private UserDao userDao;
     private DtoEntityConverter converter;
     private PasswordEncoderBean passwordEncoder;
+    private MessageServices messageServices;
 
-    @Autowired
-    public UserManager(UserDao userDao, DtoEntityConverter converter, PasswordEncoderBean passwordEncoder) {
-        this.userDao = userDao;
-        this.converter = converter;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public String save(UserDto userDto) throws EmailExistsException {
         if (new UserNameExistsValidator(userDao).validate(userDto.getEmail()))
-            throw new EmailExistsException("Username is already existed, try login in");
+            throw new EmailExistsException(messageServices.getMessage("err.email.exists"));
         User user = (User) converter.dtoToEntity(userDto, new User());
         // Encrypting password
         user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
@@ -79,7 +76,7 @@ public class UserManager implements UserService, UserDetailsService {
     public String update(UserDetailsDto userDto, String slug) throws Exception {
         User user = userDao.findByEmail(userDto.getEmail());
         if (!passwordEncoder.passwordEncoder().matches(userDto.getPassword(), user.getPassword()))
-            throw new PasswordMisMatchException("Provided password doesn't match current password!");
+            throw new PasswordMisMatchException(messageServices.getMessage("err.psd.mismatch"));
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         return userDao.save(user)+" your details are updated";
@@ -99,7 +96,7 @@ public class UserManager implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userDao.findByEmail(username);
         if (user == null) {
-            throw new UsernameNotFoundException("Invalid username or password!");
+            throw new UsernameNotFoundException(messageServices.getMessage("err.username.notfound"));
         }
         return new CustomUserDetailsDto(user);
 

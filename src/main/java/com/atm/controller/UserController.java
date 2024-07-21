@@ -1,6 +1,7 @@
 package com.atm.controller;
 
 import com.atm.business.abstracts.UserService;
+import com.atm.business.concretes.MessageServices;
 import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDetailsDto;
@@ -24,6 +25,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private MessageServices messageServices;
 
     @PostMapping
     public String update(@Valid @ModelAttribute("user") UserDetailsDto userDto, BindingResult bindingResult
@@ -41,7 +44,8 @@ public class UserController {
         userDto.setEmail(userDetails.getUser().getEmail());
         userService.update(userDto, slug);
         log.info("User profile update section is it called??");
-        redirectAttributes.addFlashAttribute("success", "User updated successfully.");
+        redirectAttributes.addFlashAttribute("success",
+                messageServices.getMessage("scs.profile.update"));
         return "redirect:/atm/profile";
     }
 }

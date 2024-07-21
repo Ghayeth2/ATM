@@ -46,7 +46,19 @@ public class SecurityConfig  {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                /*
+                CSRF is for Client-Site Request Forgery
+                it is enabled by default for protecting this type of attacks
+                where attacker may use client's info for unwanted actions in a site
+                that the user is registered or logged in.
+                If the application is running on mobile or other services than web,
+                then no need to enable this feature since the attacks are only on Web
+                Also, if the application is a stateless without keep tracking user details
+                we can again disable this feature.
+
+                Best practice is to leave it enabled
+                 */
+//                .csrf(csrf -> csrf.disable())
                 .authorizeRequests()
                 .requestMatchers(
                         // The problem was from the security chain. I missed mentioning POST URL
