@@ -12,7 +12,7 @@
 
 
                     <div class="card card-primary">
-                        <div class="card-header"><h4>Login</h4></div>
+                        <div class="card-header"><h4 th:text="#{blt.login}"></h4></div>
 
                         <div class="card-body">
                             <form th:method="post" th:action="@{/atm/login}">
@@ -35,46 +35,48 @@
                                 <!--notFound message-->
                                 <!--Logout message-->
                                 <div th:if="${param.logout}">
-                                    <div class="alert alert-info" th:text="'You have been logged out.'"></div>
+                                    <div class="alert alert-info" th:text="#{msg.logout}"></div>
                                 </div>
                                 <!--Logout message-->
                                 <div class="form-group">
-                                    <label for="username">Email</label>
+                                    <label for="username" th:text="#{user.email}"></label>
                                     <input id="username" type="email" class="form-control" name="username" tabindex="1"
                                            required autofocus>
-                                    <div class="invalid-feedback">
-                                        Please fill in your email
+                                    <div class="invalid-feedback" th:text="#{msg.email}">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="d-block">
-                                        <label for="password" class="control-label">Password</label>
+                                        <label for="password" class="control-label" th:text="#{user.password}"></label>
                                         <div class="float-right">
-                                            <a href="auth-forgot-password.html" class="text-small">
-                                                Forgot Password?
+                                            <a href="auth-forgot-password.html" class="text-small"
+                                            th:text="#{msg.forgotPassword}" >
                                             </a>
                                         </div>
                                     </div>
                                     <input id="password" type="password" class="form-control" name="password"
                                            tabindex="2" required>
-                                    <div class="invalid-feedback">
-                                        please fill in your password
+                                    <div class="invalid-feedback"
+                                    th:text="#{msg.password}" >
+
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                                        Login
+                                    <button type="submit" th:text="#{blt.login}"
+                                            class="btn btn-primary btn-lg btn-block" tabindex="4">
+
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div class="mt-5 text-muted text-center">
-                        Don't have an account? <a th:href="@{/atm/registration}">Create One</a>
+                    <div  class="mt-5 text-muted text-center"  >
+                        Don't have an account? <a th:text="#{blt.signup}" th:href="@{/atm/registration}"></a>
                     </div>
                     <div class="simple-footer">
-                        <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                        <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i>
+                            <span th:text="#{blt.home}"></span></a>
                     </div>
                 </div>
             </div>

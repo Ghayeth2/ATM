@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<!-- Head & css links -->
+<head th:replace="~{fragments/headFragment::head-section}"></head>
+
+<body>
+<div id="app">
+    <section class="section">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
+                    <div class="card card-primary">
+                        <div class="card-header"><h4>Profile</h4></div>
+
+                        <div class="card-body">
+                            <form th:method="post" th:action="@{/atm/user/profile}" th:object="${user}">
+                                <!--Success message-->
+                                <div th:if="${success}">
+                                    <div class="alert alert-success text-center" th:text="${success}"></div>
+                                </div> <!--Username Exists Error-->
+                                <div th:if="${misMatch}">
+                                    <div class="alert alert-danger text-center" th:text="${misMatch}"></div>
+                                </div> <!--Username Exists Error-->
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="firstName">First Name</label>
+                                        <input id="firstName" type="text" th:value="${user.firstName}"
+                                               class="form-control" name="firstName"
+                                               autofocus>
+                                        <p class="text-danger" th:if="${#fields.hasErrors()}"
+                                           th:errors="*{firstName}"></p>
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <label for="lastName">Last Name</label>
+                                        <input id="lastName" th:value="${user.lastName}"
+                                               type="text" class="form-control" name="lastName">
+                                        <p class="text-danger" th:if="${#fields.hasErrors()}"
+                                           th:errors="*{lastName}"></p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input id="email" type="text"
+                                           th:value="${user.email}" class="form-control" name="email" readonly>
+                                    <div class="invalid-feedback">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="password" class="d-block">Enter your current password, the field is
+                                            empty</label>
+                                        <input id="password" type="password" class="form-control" name="password">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                        Update
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="simple-footer">
+                        <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div th:replace="~{fragments/footFragment::js-links}"></div>
+
+</body>
+</html>

@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
                     <div class="card card-primary">
-                        <div class="card-header"><h4>Register</h4></div>
+                        <div class="card-header"><h4 th:text="#{blt.signup}"></h4></div>
 
                         <div class="card-body">
                             <form th:method="post" th:action="@{/atm/user}" th:object="${user}">
@@ -24,23 +24,23 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-6">
-                                        <label for="firstName">First Name</label>
-                                        <input id="firstName" type="text" class="form-control" name="firstName"
+                                        <label for="firstName" th:text="#{user.firstName}"></label>
+                                        <input id="firstName" type="text" class="form-control"  th:name="#{frm.first}"
                                                autofocus>
                                         <p class="text-danger" th:if="${#fields.hasErrors()}"
                                            th:errors="*{firstName}"></p>
                                     </div>
                                     <div class="form-group col-6">
-                                        <label for="lastName">Last Name</label>
-                                        <input id="lastName" type="text" class="form-control" name="lastName">
+                                        <label for="lastName" th:text="#{user.lastName}"></label>
+                                        <input id="lastName" type="text" class="form-control" th:name="#{frm.last}">
                                         <p class="text-danger" th:if="${#fields.hasErrors()}"
                                            th:errors="*{lastName}"></p>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="email">Email</label>
-                                    <input id="email" type="text" class="form-control" name="email">
+                                    <label for="email" th:text="#{user.email}" ></label>
+                                    <input id="email" type="text" class="form-control" th:name="#{frm.eml}">
                                     <p class="text-danger" th:if="${#fields.hasErrors()}" th:errors="*{email}"></p>
                                     <div class="invalid-feedback">
                                     </div>
@@ -48,14 +48,14 @@
 
                                 <div class="row">
                                     <div class="form-group col-6">
-                                        <label for="password" class="d-block">Password</label>
-                                        <input id="password" type="password" class="form-control" name="password">
+                                        <label for="password" class="d-block" th:text="#{user.password}" ></label>
+                                        <input id="password" type="password" class="form-control" th:name="#{frm.psd}">
                                         <p class="text-danger" th:if="${#fields.hasErrors()}"
                                            th:errors="*{password}"></p>
                                     </div>
                                     <div class="form-group col-6">
-                                        <label for="password2" class="d-block">Password Confirmation</label>
-                                        <input id="password2" type="password" class="form-control" name="password2">
+                                        <label for="password2" class="d-block" th:text="#{user.repeatPassword}" ></label>
+                                        <input id="password2" type="password" class="form-control" th:name="#{frm.psd2}">
                                         <p class="text-danger" th:if="${#fields.hasErrors()}"
                                            th:errors="*{password2}"></p>
                                         <p class="text-danger" th:if="${param.notMatched}"
@@ -65,18 +65,21 @@
 
 
                                 <div class="form-group">
-                                    <a th:href="@{/atm/login}" class="btn btn-success btn-lg btn-block">
-                                        Login
+                                    <a th:href="@{/atm/login}" th:text="#{blt.login}"
+                                       class="btn btn-success btn-lg btn-block">
+
                                     </a>
-                                    <button type="submit" class="btn btn-primary btn-lg btn-block">
-                                        Register
+                                    <button type="submit" th:text="#{blt.signup}"
+                                            class="btn btn-primary btn-lg btn-block">
+
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="simple-footer">
-                        <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                        <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i>
+                            <span th:text="#{blt.home}">`</span></a>
                     </div>
                 </div>
             </div>
