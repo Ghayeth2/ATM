@@ -1,10 +1,8 @@
 package com.atm.business.abstracts;
 
-import com.atm.core.exception.EmailExistsException;
+import com.atm.core.exceptions.EmailExistsException;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
@@ -16,4 +14,5 @@ public interface UserService {
     // User cannot delete himself, Admin can
     String  delete(Long id);
     List<UserDto> users();
+    String confirmToken(String token);
 }

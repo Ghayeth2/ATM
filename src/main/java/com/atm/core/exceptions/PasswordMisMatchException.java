@@ -1,4 +1,4 @@
-package com.atm.core.exception;
+package com.atm.core.exceptions;
 
 public class PasswordMisMatchException extends Exception {
     public PasswordMisMatchException(String message) {

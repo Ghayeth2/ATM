@@ -1,6 +1,6 @@
 package com.atm.business.abstracts;
 
-import com.atm.core.exception.EmailExistsException;
+import com.atm.core.exceptions.EmailExistsException;
 import com.atm.model.dtos.UserDto;
 /*
  SOLID

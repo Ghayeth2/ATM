@@ -16,23 +16,34 @@
 
                         <div class="card-body">
                             <form th:method="post" th:action="@{/atm/login}">
-                                <!--Error message-->
-                                <div th:if="${param.error}">
-                                    <div class="alert alert-danger" th:text="'Invalid username or password!'"></div>
+                                <!--Locked message-->
+                                <div th:if="${param.locked}">
+                                    <div class="alert alert-danger" th:text="#{err.account.locked}"></div>
                                 </div>
-                                <!--Error message-->
+                                <!--locked message-->
+                                <!--unLocked message-->
+                                <div th:if="${param.unlocked}">
+                                    <div class="alert alert-danger" th:text="#{err.account.unlocked}"></div>
+                                </div>
+                                <!--unlocked message-->
                                 <!--Failure message-->
                                 <div th:if="${param.failure}">
-                                    <div class="alert alert-danger">
-                                        [[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
+                                    <div class="alert alert-danger" th:text="#{err.login.failure}">
+
                                     </div>
                                 </div>
                                 <!--notFound message--> <!--Failure message-->
                                 <div th:if="${param.notFound}">
-                                    <div class="alert alert-danger" th:text="'Email is not found, try sign up.'">
+                                    <div class="alert alert-danger" th:text="#{err.email.notfound}">
                                     </div>
                                 </div>
                                 <!--notFound message-->
+                                <!--inactive message--> <!--Failure message-->
+                                <div th:if="${param.inactive}">
+                                    <div class="alert alert-danger" th:text="#{err.account.disabled}">
+                                    </div>
+                                </div>
+                                <!--inactive message-->
                                 <!--Logout message-->
                                 <div th:if="${param.logout}">
                                     <div class="alert alert-info" th:text="#{msg.logout}"></div>
@@ -51,14 +62,14 @@
                                         <label for="password" class="control-label" th:text="#{user.password}"></label>
                                         <div class="float-right">
                                             <a href="auth-forgot-password.html" class="text-small"
-                                            th:text="#{msg.forgotPassword}" >
+                                               th:text="#{msg.forgotPassword}">
                                             </a>
                                         </div>
                                     </div>
                                     <input id="password" type="password" class="form-control" name="password"
                                            tabindex="2" required>
                                     <div class="invalid-feedback"
-                                    th:text="#{msg.password}" >
+                                         th:text="#{msg.password}">
 
                                     </div>
                                 </div>
@@ -71,7 +82,7 @@
                             </form>
                         </div>
                     </div>
-                    <div  class="mt-5 text-muted text-center"  >
+                    <div class="mt-5 text-muted text-center">
                         Don't have an account? <a th:text="#{blt.signup}" th:href="@{/atm/registration}"></a>
                     </div>
                     <div class="simple-footer">
