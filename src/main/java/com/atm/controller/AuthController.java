@@ -2,6 +2,7 @@ package com.atm.controller;
 
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
+import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.model.dtos.UserDto;
 import lombok.AllArgsConstructor;
@@ -44,8 +45,11 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public String verify(@RequestParam("token") String token)  {
-       return userService.confirmToken(token);
-//        return "redirect:/atm/login";
+    public String verify(@RequestParam("token") String token, RedirectAttributes ra) throws AccountInactiveException {
+       userService.confirmToken(token);
+       ra.addFlashAttribute("illegal", false);
+        log.info("Email confirmation redirecting to email_confirmed html template...");
+       // TODO: Configure a template where u show that email is verified & redirect into login form that template.
+        return "redirect:/atm/email_confirmed";
     }
 }

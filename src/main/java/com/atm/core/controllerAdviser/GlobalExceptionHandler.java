@@ -31,10 +31,19 @@ public class GlobalExceptionHandler {
         return "redirect:/atm/profile";
     }
 
-    // Perhaps, u can modify this one to make as above ones redirect:/atm/login with flush attribute
-//    @ExceptionHandler(AccountInactiveException.class)
-//    @ResponseBody
-//    public ResponseEntity<String> handleAccountInactiveException(AccountInactiveException ex) {
-//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+//    @ExceptionHandler(IllegalStateException.class)
+//    public String handleIllegalStateException(IllegalStateException ex, RedirectAttributes redirectAttributes
+//                    ) {
+//
+//        return "redirect:/atm/email_confirmed";
 //    }
+
+    // Perhaps, u can modify this one to make as above ones redirect:/atm/login with flush attribute
+    @ExceptionHandler(AccountInactiveException.class)
+
+    public String handleAccountInactiveException(AccountInactiveException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("illegal", true);
+        redirectAttributes.addFlashAttribute("message", ex.getMessage());
+        return "redirect:/atm/email_confirmed";
+    }
 }

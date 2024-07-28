@@ -4,6 +4,7 @@ import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.abstracts.EmailSender;
 import com.atm.business.abstracts.UserService;
 import com.atm.core.bean.PasswordEncoderBean;
+import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
@@ -122,15 +123,15 @@ public class UserManager implements UserService, UserDetailsService {
         );
     }
 
-    @Transactional
+
     @Override
-    public String confirmToken(String token) {
+    public String  confirmToken(String token) throws AccountInactiveException {
         // TODO: Confirm token
         ConfirmationToken confirmationToken = confirmationTokenDao.findByToken(token)
                 .orElseThrow(() -> new IllegalStateException("No token found!"));
 
         if (confirmationToken.getConfirmedAt() != null)
-            throw new IllegalStateException("Email is already confirmed!");
+            throw new AccountInactiveException("Email is already confirmed!");
 
         LocalDateTime expiresAt = confirmationToken.getExpiredAt();
         if (expiresAt.isBefore(LocalDateTime.now())) {
@@ -139,7 +140,7 @@ public class UserManager implements UserService, UserDetailsService {
                     confirmationToken.getUser()
             ));
             // TODO: Resend confirmation email
-            throw new IllegalStateException("Token is already expired, check your account" +
+            throw new AccountInactiveException("Token is already expired, check your account" +
                     " for new token just been sent..");
         }
         // Update confirmation token, confirmedAt
@@ -149,7 +150,7 @@ public class UserManager implements UserService, UserDetailsService {
         User user = confirmationToken.getUser();
         user.setEnabled(true);
         userDao.save(user);
-        return "Confirmed";
+        return "confirmed";
     }
 
     @Override

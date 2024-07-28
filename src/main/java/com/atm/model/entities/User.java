@@ -40,18 +40,6 @@ public class User extends IntermidateBaseEntity {
     ), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ConfirmationToken> tokens;
-
-//    public User(String firstName, String lastName, String email, String password,
-//                int accountNonLocked, int failedAttempts, Date lockTime, List<Role> roles) {
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.email = email;
-//        this.password = password;
-//        this.accountNonLocked = accountNonLocked;
-//        this.failedAttempts = failedAttempts;
-//        this.lockTime = lockTime;
-//        this.roles = roles;
-//    }
 }

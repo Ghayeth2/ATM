@@ -35,6 +35,11 @@ public class MainController {
         return "layout/login";
     }
 
+    @GetMapping("/email_confirmed")
+    public String emailConfirmed(){
+        return "layout/email_confirmed";
+    }
+
     // Registration page
     @GetMapping("/registration")
     public String signup(Model model){
