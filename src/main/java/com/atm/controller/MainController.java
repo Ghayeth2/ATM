@@ -40,6 +40,11 @@ public class MainController {
         return "layout/email_confirmed";
     }
 
+    @GetMapping("/password/forgot")
+    public String forgot(){
+        return "layout/email_resetpass";
+    }
+
     // Registration page
     @GetMapping("/registration")
     public String signup(Model model){

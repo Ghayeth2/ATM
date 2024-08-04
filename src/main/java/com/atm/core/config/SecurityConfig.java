@@ -65,7 +65,8 @@ public class SecurityConfig  {
                         "/atm/registration", "/atm/registration?notMatched",
                         "/atm/registration?success","/atm/user/**","/atm", "/assets/js/**",
                         "/assets/css/**", "/assets/img/**", "/assets/fonts/**",
-                        "/assets/modules/**", "/public/**", "/atm/login", "/atm/email_confirmed"
+                        "/assets/modules/**", "/public/**", "/atm/password/forgot",
+                        "/atm/login", "/atm/email_confirmed"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
