@@ -3,6 +3,7 @@ package com.atm.model.entities;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 @Data @Entity @Table(name = "users")
 @NamedEntityGraph @Builder
 @Log4j2 @NoArgsConstructor
+@AllArgsConstructor
 public class User extends IntermidateBaseEntity {
     @Column(name = "first_name", length = 30, nullable = false)
     private String firstName;
@@ -24,7 +26,7 @@ public class User extends IntermidateBaseEntity {
     private String email;
     @Column(nullable = false)
     private String password;
-
+    private boolean enabled;
     @Column(name = "account_non_locked" )
     private int accountNonLocked;
     @Column(name = "failed_attempts")
@@ -38,15 +40,6 @@ public class User extends IntermidateBaseEntity {
     ), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    public User(String firstName, String lastName, String email, String password,
-                int accountNonLocked, int failedAttempts, Date lockTime, List<Role> roles) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.accountNonLocked = accountNonLocked;
-        this.failedAttempts = failedAttempts;
-        this.lockTime = lockTime;
-        this.roles = roles;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ConfirmationToken> tokens;
 }

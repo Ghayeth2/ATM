@@ -72,7 +72,7 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-right">
-                <a th:href="@{/atm/profile}" class="dropdown-item has-icon">
+                <a sec:authorize="isAuthenticated()" th:href="@{/atm/profile}" class="dropdown-item has-icon">
                     <i class="far fa-user"></i> Profile
                 </a>
                 <div class="dropdown-divider"></div>

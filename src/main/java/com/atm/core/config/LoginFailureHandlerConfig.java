@@ -1,16 +1,13 @@
 package com.atm.core.config;
 
-import com.atm.business.abstracts.UserAccount;
+import com.atm.business.abstracts.UserAccountServices;
+import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
-import com.atm.business.concretes.UserAccountManager;
-import com.atm.model.dtos.CustomUserDetailsDto;
+import com.atm.business.concretes.UserAccountServicesManager;
 import com.atm.model.entities.User;
-import lombok.AllArgsConstructor;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,46 +21,61 @@ import java.io.IOException;
 @Log4j2
 public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHandler {
 
-    private final UserAccount userAccount;
-    private MessageServices messageServices;
-    private final String FAILURE_URL = "/atm/login?failure";
-    private final String NOT_FOUND_URL = "/atm/login?notFound";
+    private final UserAccountServices userAccountServices;
+    private final MessageServices messageServices;
+    // Do i need to store redirecting routes in separated file?? properties??
+    // yes i do, in case of base routes changes (/atm/login >> /atm/v*/login)
+    private String BASE_URL;
 
-    public LoginFailureHandlerConfig(UserAccount userAccount, MessageServices messageServices) {
-        this.userAccount = userAccount;
+    private String FAILURE_URL;
+//    private String ACCOUNT_INACTIVE_URL = "/atm/login?inactive";
+
+    public LoginFailureHandlerConfig(UserAccountServices userAccountServices,
+                                     MessageServices messageServices) {
+        this.userAccountServices = userAccountServices;
         this.messageServices = messageServices;
-        setDefaultFailureUrl(FAILURE_URL);
+
     }
+
+    @PostConstruct
+    public void init() {
+        BASE_URL = messageServices.getMessage("route.login.failure");
+    }
+
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
         String email = request.getParameter("username");
-        User user = userAccount.findByEmail(email);
+        User user = userAccountServices.findByEmail(email);
         if (user != null) {
-            handleExistingUser(user);
+            if (!user.isEnabled()){
+                response.sendRedirect(BASE_URL+"inactive");
+                return;
+            }
+            if (user.getAccountNonLocked() == 1) {
+                if (user.getFailedAttempts() < UserAccountServicesManager.MAX_FAILED_ATTEMPTS - 1) {
+                    userAccountServices.increaseFailedAttempts(user);
+                } else {
+                    userAccountServices.lock(user);
+                    response.sendRedirect(BASE_URL+"locked");
+                }
+            } else {
+                if (userAccountServices.unlockWhenTimeExpired(user)) {
+                    // those messages should be dynamically sat
+                    response.sendRedirect(BASE_URL+"unlocked");
+                }
+            }
         } else {
-            response.sendRedirect(NOT_FOUND_URL);
+            // No user found (sign up required)
+            response.sendRedirect(BASE_URL+"notFound");
             return;
         }
 
+        // Default (username or password invalidation)
+        setDefaultFailureUrl(BASE_URL+"failure");
         super.onAuthenticationFailure(request, response, exception);
     }
 
-    private void handleExistingUser(User user) {
-        if (user.getAccountNonLocked() == 1) {
-            if (user.getFailedAttempts() < UserAccountManager.MAX_FAILED_ATTEMPTS - 1) {
-                userAccount.increaseFailedAttempts(user);
-            } else {
-                userAccount.lock(user);
-                throw new LockedException(messageServices.getMessage("err.account.locked"));
-            }
-        } else {
-            if (userAccount.unlockWhenTimeExpired(user)) {
-                // those messages should be dynamically sat
-                throw new LockedException(messageServices.getMessage("err.account.unlocked"));
-            }
-        }
-    }
 }
 
