@@ -1,6 +1,6 @@
 package com.atm.business.concretes;
 
-import com.atm.business.abstracts.EmailSender;
+import com.atm.business.abstracts.EmailSenderServices;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
-public class EmailSenderManager implements EmailSender {
+public class EmailSenderServicesManager implements EmailSenderServices {
 
     private final static Logger LOGGER = LoggerFactory
-            .getLogger(EmailSender.class);
+            .getLogger(EmailSenderServices.class);
 
     private final JavaMailSender mailSender;
 
@@ -39,4 +39,5 @@ public class EmailSenderManager implements EmailSender {
             throw new IllegalStateException("failed to send email");
         }
     }
+
 }

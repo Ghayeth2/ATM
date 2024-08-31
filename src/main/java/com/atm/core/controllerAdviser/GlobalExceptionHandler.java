@@ -46,4 +46,10 @@ public class GlobalExceptionHandler {
         redirectAttributes.addFlashAttribute("message", ex.getMessage());
         return "redirect:/atm/email_confirmed";
     }
+
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+        return "redirect:/atm/login";
+    }
 }

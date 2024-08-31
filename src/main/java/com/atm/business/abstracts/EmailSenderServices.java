@@ -1,5 +1,5 @@
 package com.atm.business.abstracts;
 
-public interface EmailSender {
+public interface EmailSenderServices {
     void send(String to, String email);
 }

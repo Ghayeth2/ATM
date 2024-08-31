@@ -2,11 +2,8 @@ package com.atm.controller;
 
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
-import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDetailsDto;
-import com.atm.model.dtos.UserDto;
-import com.atm.model.entities.User;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

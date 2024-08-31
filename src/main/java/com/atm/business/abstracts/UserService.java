@@ -4,16 +4,18 @@ import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
+import com.atm.model.entities.User;
 
 import java.util.List;
 
 // UserDetailsServices might have broken ISP & SRP
-public interface UserService {
-    String  update(UserDetailsDto userDto, String slug) throws Exception;
-    String save(UserDto userDto) throws EmailExistsException;
+public interface UserService extends CRUDServices <UserDto, UserDetailsDto>{
+
+
     UserDto findByEmail(String email);
     // User cannot delete himself, Admin can
-    String  delete(Long id);
-    List<UserDto> users();
-    String confirmToken(String token) throws AccountInactiveException;
+    void resetPasswordSender(String email);
+    String resetPassword(String password, String slug);
+    User findUserByToken(String token);
+
 }

@@ -1,6 +1,5 @@
 package com.atm.controller;
 
-import com.atm.business.abstracts.UserAccount;
 import com.atm.business.abstracts.UserService;
 import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.model.dtos.CustomUserDetailsDto;
@@ -10,7 +9,6 @@ import com.atm.model.entities.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +41,11 @@ public class MainController {
     @GetMapping("/password/forgot")
     public String forgot(){
         return "layout/email_resetpass";
+    }
+
+    @GetMapping("/reset/password")
+    public String resetPassword(){
+        return "layout/resetPassword";
     }
 
     // Registration page

@@ -1,23 +1,27 @@
 package com.atm.business.concretes;
 
-import com.atm.business.abstracts.UserAccount;
+import com.atm.business.abstracts.UserAccountServices;
+import com.atm.dao.ConfirmationTokenDao;
 import com.atm.dao.UserDao;
 import com.atm.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Transactional
-public class UserAccountManager implements UserAccount {
+public class UserAccountServicesManager implements UserAccountServices {
     private UserDao userDao;
+    private ConfirmationTokenDao confirmationTokenDao;
     public static final int MAX_FAILED_ATTEMPTS = 3;
     private static final long LOCK_TIME_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
     @Autowired
-    public UserAccountManager(UserDao userDao) {
+    public UserAccountServicesManager(UserDao userDao) {
         this.userDao = userDao;
     }
 
@@ -61,4 +65,14 @@ public class UserAccountManager implements UserAccount {
     public User findByEmail(String email) {
         return userDao.findByEmail(email);
     }
+
+    @Override
+    public void activateAccount(User user) {
+        Optional<User> userOptional = userDao.findById(user.getId());
+        if (userOptional.isPresent()) {
+            userDao.save(user);
+        }
+    }
+
+
 }

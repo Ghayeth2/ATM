@@ -21,6 +21,7 @@ public class UserDto {
 
     @NotEmpty(message = "{valid.not.empty}")
     private String lastName;
+    private String slug;
     @Email(message = "{valid.email}")
     @NotEmpty(message = "{valid.not.empty}")
     private String email;
@@ -29,7 +30,6 @@ public class UserDto {
             message = "{valid.password.regex}")
     @Size(min = 6, max = 50)
     private String password;
-    private String slug;
     @NotEmpty(message = "{valid.not.empty}")
     private String password2;
 }
