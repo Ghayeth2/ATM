@@ -34,6 +34,9 @@ public class User extends IntermidateBaseEntity {
     @Column(name = "lock_time")
     private Date lockTime;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Account> accounts;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(
             name = "user_id", referencedColumnName = "id"

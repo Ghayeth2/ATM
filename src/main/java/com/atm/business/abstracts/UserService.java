@@ -9,7 +9,7 @@ import com.atm.model.entities.User;
 import java.util.List;
 
 // UserDetailsServices might have broken ISP & SRP
-public interface UserService extends CRUDServices <UserDto, UserDetailsDto>{
+public interface UserService extends CRUDServices <UserDto, UserDetailsDto, User>{
 
 
     UserDto findByEmail(String email);

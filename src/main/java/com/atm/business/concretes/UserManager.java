@@ -144,13 +144,12 @@ public class UserManager implements UserService, UserDetailsService {
 
 
     @Override
-    public UserDto findBySlug(String slug) {
+    public User findBySlug(String slug) {
         Optional<User> user = userDao.findBySlug(slug);
         if (user.isEmpty())
             throw new UsernameNotFoundException(messageServices.
                     getMessage("err.user.not.found"));
-        return (UserDto) converter
-                .entityToDto(userDao.findBySlug(slug).get(), UserDto.class);
+        return user.get();
     }
 
     @Override

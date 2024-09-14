@@ -12,10 +12,10 @@
         </div>
         <ul class="sidebar-menu">
             <li class="dropdown active">
-                <a href="#" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
             </li>
             <li class="dropdown">
-                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa-solid fa-money-check"></i> <span>Transaction</span></a>
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa-solid fa-money-check"></i> <span>Transactions</span></a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="layout-default.html">Deposit</a></li>
                     <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="layout-transparent.html">Withdraw</a></li>
@@ -24,11 +24,10 @@
                 </ul>
             </li>
             <li class="dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fa fa-bank"></i> <span>Account</span></a>
+                <a href="#" class="nav-link has-dropdown"><i class="fa fa-bank"></i> <span>Accounts</span></a>
                 <ul class="dropdown-menu">
                     <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="bootstrap-alert.html">New</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="bootstrap-badge.html">Settings</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="bootstrap-breadcrumb.html">Secure</a></li> <!-- send notifications if account is accessed.
+                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="bootstrap-badge.html">Accounts</a></li><!-- send notifications if account is accessed.
                      set password for account etc.-->
                 </ul>
             </li>
@@ -37,9 +36,7 @@
 
                 <a sec:authorize="hasRole('ROLE_ADMIN')" href="#" class="nav-link has-dropdown"> <i class="fa-solid fa-gears"></i> <span>Settings</span></a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('ROLE_ADMIN')" ><a class="nav-link" href="#">Roles</a></li>
                     <li sec:authorize="hasRole('ROLE_ADMIN')" ><a class="nav-link beep beep-sidebar" href="#">Users</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link beep beep-sidebar" href="#">Report</a></li>
                     <!-- IN ADMIN SIDE THE LIST OF REPORTS WILL BE SHOWN IN USER'S SIDE
                     REPORT FORM WILL BE DISPLAYED -->
                     <!--                    <li><a class="nav-link beep beep-sidebar" href="#">Messages</a></li>-->
