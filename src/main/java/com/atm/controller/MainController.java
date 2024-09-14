@@ -55,6 +55,18 @@ public class MainController {
         return "layout/signup";
     }
 
+    /*
+    if i was using renders, handlers, api
+    structure. it wouldn't be violating anything
+    in renders i render pages with/without data
+    in here now main controller is already violating SRP
+    and could not fix it. So for this project continue with
+    AccountController. for all account related services.
+     */
+//    @GetMapping("/accounts")
+//    public String accounts(Model model){}
+
+    // if rename the controller to public. only this violates it
     @GetMapping("/profile")
     public String profile(Model model, Authentication auth){
         CustomUserDetailsDto userDetails =  (CustomUserDetailsDto) auth.getPrincipal();
