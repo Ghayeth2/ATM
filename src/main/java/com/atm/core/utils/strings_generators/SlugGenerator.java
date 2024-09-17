@@ -1,4 +1,4 @@
-package com.atm.core.utils.stringsOPS;
+package com.atm.core.utils.strings_generators;
 
 import org.springframework.stereotype.Component;
 
