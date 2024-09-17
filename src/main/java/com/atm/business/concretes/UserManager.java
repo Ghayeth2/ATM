@@ -8,7 +8,7 @@ import com.atm.core.bean.PasswordEncoderBean;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
-import com.atm.core.utils.stringsOPS.SlugGenerator;
+import com.atm.core.utils.strings_generators.SlugGenerator;
 import com.atm.dao.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDetailsDto;

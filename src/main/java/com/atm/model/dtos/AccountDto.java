@@ -1,5 +1,6 @@
 package com.atm.model.dtos;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 

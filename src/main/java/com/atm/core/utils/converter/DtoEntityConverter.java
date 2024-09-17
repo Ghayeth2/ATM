@@ -23,18 +23,4 @@ public class DtoEntityConverter {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper.map(dto, entity.getClass());
     }
-
-    public List<Object> dtosToEntities(List<Object> dtos, Object entity){
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<Object> entities = new ArrayList<>();
-        dtos.forEach(dto -> entities.add(modelMapper.map(dto, entity.getClass())));
-        return entities;
-    }
-
-    public List<Object> entitiesToDtos(List<Object> entities, Object dto){
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        List<Object> dtos = new ArrayList<>();
-        entities.forEach(entity -> dtos.add(modelMapper.map(entity, dto.getClass())));
-        return dtos;
-    }
 }

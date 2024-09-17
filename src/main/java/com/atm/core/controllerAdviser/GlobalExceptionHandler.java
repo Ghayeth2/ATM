@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.util.NoSuchElementException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -45,6 +48,21 @@ public class GlobalExceptionHandler {
         redirectAttributes.addFlashAttribute("illegal", true);
         redirectAttributes.addFlashAttribute("message", ex.getMessage());
         return "redirect:/atm/email_confirmed";
+    }
+
+    // account
+    @ExceptionHandler(IOException.class)
+    public String handleIOException(IOException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("exception",
+                "Couldn't update lead/tail account numbers, " +ex.getMessage());
+        return "redirect:/atm/profile";
+    }
+    // account
+    @ExceptionHandler(NoSuchElementException.class)
+    public String handleNoSuchElementException(NoSuchElementException ex, RedirectAttributes redirectAttributes) {
+        // when u finish the app. u can come back and modify the error messages.
+        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+        return "redirect:/atm/profile";
     }
 
     @ExceptionHandler(Exception.class)
