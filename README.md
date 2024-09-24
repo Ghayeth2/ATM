@@ -12,7 +12,7 @@ In addition to basic user features, the system includes administrative capabilit
 * Spring MVC 
 * Thymeleaf 
 * MySQL 
-* Redis
+
 
 ## Dependencies
 * Bean validation
