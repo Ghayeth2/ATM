@@ -14,6 +14,7 @@ In addition to basic user features, the system includes administrative capabilit
 * **Thymeleaf**
 * **MySQL**
 * **Redis**
+* **MailDev**
 
 ## Technical Features
 * **Bean Validation**: Ensures data integrity using annotations like `@Valid`, `@NotNull`, and `@Pattern`.
@@ -32,6 +33,7 @@ In addition to basic user features, the system includes administrative capabilit
 * **Java 17**
 * **Redis**
 * **MySQL**
+* **MailDev**
 
 ## Want to Contribute?
 If you're interested in collaborating or contributing to this project, feel free to email me at [ghayeth.msri@gmail.com]. I look forward to working together!
