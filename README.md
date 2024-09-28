@@ -23,6 +23,7 @@ In addition to basic user features, the system includes administrative capabilit
 * Java mail sender
 ## Aside features
 * Filtering users' transactions by (Date, first/last name, email, amounts range)
+* OAtuh (As options of login)
 * Mail verification 
 * Forgot password
 
