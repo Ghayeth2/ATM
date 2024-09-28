@@ -26,7 +26,8 @@ In addition to basic user features, the system includes administrative capabilit
 * OAtuh (As options of login)
 * Mail verification 
 * Forgot password
+* Internationalization
+* Centralized resource bundles (messages.properties, errors.properties, validations.properties, etc.)
 
-## What's left
-- Transactions services
-- Account services
+
+  
