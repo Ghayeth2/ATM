@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Optional;
 @Log4j2
 // Auditor config // getting logged in username
+// Auditing is not used for getting logged in username
+// it is used to keep tracking who did what in the system
+// after they are logged in.
 public class AuditorAwareImpl implements AuditorAware {
 
     CustomUserDetailsDto userDetailsDto;

@@ -1,11 +1,14 @@
 package com.atm.business.concretes;
 
 import com.atm.business.abstracts.ConfigService;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 @Service
@@ -34,5 +37,16 @@ public class ConfigManager implements ConfigService {
             tail = String.format("%04d", tailN);
             updateProperty("account.tail.number", tail);
         }
+    }
+
+    // Used to set param within successes.properties file
+    // scs.accounts=...${param}....
+    @Override
+    public void replaceMsgParameter(String param, String value, String property) {
+        Properties messages = new Properties();
+        Map<String, String> m = new HashMap<>();
+        m.put(param, value);
+        StrSubstitutor sub = new StrSubstitutor(m);
+        String msg = sub.replace(messages.getProperty(property));
     }
 }

@@ -1,9 +1,7 @@
-package com.atm.dao;
+package com.atm.dao.abstracts;
 
 import com.atm.model.dtos.AccountsUsers;
-import com.atm.model.dtos.UsersTransactionsResponse;
 import com.atm.model.entities.User;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

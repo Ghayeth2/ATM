@@ -4,6 +4,7 @@ import com.atm.business.abstracts.EmailSenderServices;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Service
+@Log4j2
 public class EmailSenderServicesManager implements EmailSenderServices {
 
     private final static Logger LOGGER = LoggerFactory
@@ -33,6 +35,7 @@ public class EmailSenderServicesManager implements EmailSenderServices {
             helper.setTo(to);
             helper.setSubject("Confirm your email");
             helper.setFrom("hello@amigoscode.com");
+            log.info("is it coming here");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             LOGGER.error("failed to send email", e);

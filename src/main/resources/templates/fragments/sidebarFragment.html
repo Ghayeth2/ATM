@@ -12,31 +12,36 @@
         </div>
         <ul class="sidebar-menu">
             <li class="dropdown active">
-                <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i>
+                    <span  th:text="#{sidebar.home}"></span></a>
             </li>
             <li class="dropdown">
-                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa-solid fa-money-check"></i> <span>Transactions</span></a>
+                <a sec:authorize="isAuthenticated()" href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fa-solid fa-money-check"></i>
+                    <span th:text="#{sidebar.transactions}"></span></a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="layout-default.html">Deposit</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="layout-transparent.html">Withdraw</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="layout-top-navigation.html">Transfer</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="layout-top-navigation.html">History</a></li>
+                    <li  ><a class="nav-link" th:text="#{sidebar.transactions.deposit}" ></a></li>
+                    <li  ><a class="nav-link" th:text="#{sidebar.transactions.withdraw}" ></a></li>
+                    <li  ><a class="nav-link" th:text="#{sidebar.transactions.transfer}" ></a></li>
+                    <li  ><a class="nav-link" th:text="#{sidebar.transactions.history}" ></a></li>
                 </ul>
             </li>
             <li class="dropdown">
-                <a href="#" class="nav-link has-dropdown"><i class="fa fa-bank"></i> <span>Accounts</span></a>
+                <a sec:authorize="isAuthenticated()" href="#" class="nav-link has-dropdown"><i class="fa fa-bank"></i>
+                    <span th:text="#{sidebar.accounts}"></span></a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="bootstrap-alert.html">New</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a class="nav-link" href="bootstrap-badge.html">Accounts</a></li><!-- send notifications if account is accessed.
+                    <li ><a th:href="@{/atm/accounts/new}" class="nav-link" th:text="#{sidebar.accounts.new}" ></a></li>
+                    <li ><a class="nav-link" th:text="#{sidebar.accounts.all}"></a></li><!-- send notifications if account is accessed.
                      set password for account etc.-->
                 </ul>
             </li>
             <!--            -->
             <li class="dropdown">
 
-                <a sec:authorize="hasRole('ROLE_ADMIN')" href="#" class="nav-link has-dropdown"> <i class="fa-solid fa-gears"></i> <span>Settings</span></a>
+                <a sec:authorize="hasRole('ROLE_ADMIN')" href="#" class="nav-link has-dropdown"> <i class="fa-solid fa-gears"></i>
+                    <span th:text="#{sidebar.monitor}" ></span></a>
                 <ul class="dropdown-menu">
-                    <li sec:authorize="hasRole('ROLE_ADMIN')" ><a class="nav-link beep beep-sidebar" href="#">Users</a></li>
+                    <li sec:authorize="hasRole('ROLE_ADMIN')" >
+                        <a class="nav-link beep beep-sidebar" href="#" th:text="#{sidebar.monitor.actions}" ></a></li>
                     <!-- IN ADMIN SIDE THE LIST OF REPORTS WILL BE SHOWN IN USER'S SIDE
                     REPORT FORM WILL BE DISPLAYED -->
                     <!--                    <li><a class="nav-link beep beep-sidebar" href="#">Messages</a></li>-->

@@ -1,4 +1,4 @@
-package com.atm.dao;
+package com.atm.dao.abstracts;
 
 import com.atm.model.entities.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
