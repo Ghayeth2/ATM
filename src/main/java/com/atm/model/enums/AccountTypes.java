@@ -1,7 +1,6 @@
-package com.atm.model.dtos;
+package com.atm.model.enums;
 
 import lombok.Getter;
-import lombok.Setter;
 
 
 @Getter

@@ -1,14 +1,12 @@
-package com.atm.dao;
+package com.atm.dao.concretes;
 
+import com.atm.dao.abstracts.ConfirmationTokenDao;
 import com.atm.model.entities.ConfirmationToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-
-import java.util.concurrent.TimeUnit;
 
 @Log4j2
 @Repository

@@ -1,6 +1,6 @@
 package com.atm.model.entities;
 
-import com.atm.model.dtos.AccountTypes;
+import com.atm.model.enums.AccountTypes;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -11,11 +11,11 @@ import lombok.*;
 @Builder @AllArgsConstructor
 @NoArgsConstructor @Setter
 public class Account extends IntermidateBaseEntity{
-    @Column(unique = true, nullable = false, length = 16)
+    @Column(unique = true, nullable = false, length = 20)
     private String number;
     private double balance;
     @Column(nullable = false)
-    private AccountTypes type;
+    private String type;
     @ManyToOne
     private User user;
 }

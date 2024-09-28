@@ -1,8 +1,10 @@
 package com.atm.core.controllerAdviser;
 
+import com.atm.business.concretes.MessageServices;
 import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,8 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    private MessageServices messageServices;
 
     @ExceptionHandler(EmailExistsException.class)
     public String handleEmailExistsException(EmailExistsException ex, RedirectAttributes redirectAttributes) {
@@ -34,14 +39,6 @@ public class GlobalExceptionHandler {
         return "redirect:/atm/profile";
     }
 
-//    @ExceptionHandler(IllegalStateException.class)
-//    public String handleIllegalStateException(IllegalStateException ex, RedirectAttributes redirectAttributes
-//                    ) {
-//
-//        return "redirect:/atm/email_confirmed";
-//    }
-
-    // Perhaps, u can modify this one to make as above ones redirect:/atm/login with flush attribute
     @ExceptionHandler(AccountInactiveException.class)
 
     public String handleAccountInactiveException(AccountInactiveException ex, RedirectAttributes redirectAttributes) {
@@ -54,7 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("exception",
-                "Couldn't update lead/tail account numbers, " +ex.getMessage());
+                 messageServices.getMessage("err.io.exception"));
         return "redirect:/atm/profile";
     }
     // account

@@ -1,6 +1,6 @@
 package com.atm.core.utils.validators;
 
-import com.atm.dao.UserDao;
+import com.atm.dao.abstracts.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

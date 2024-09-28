@@ -22,22 +22,22 @@ public abstract class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "created_by", nullable = false, length = 60)
     @CreatedBy
     private String createdBy;
-    @Column(name = "created_date", nullable = false)
+    @Column(name = "created_date", nullable = false, length = 60)
     @CreatedDate
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
-    @Column(name = "updated_by", nullable = false)
+    @Column(name = "updated_by", nullable = false, length = 60)
     @LastModifiedBy
     private String updatedBy;
-    @Column(name = "updated_date", nullable = false)
+    @Column(name = "updated_date", nullable = false, length = 60)
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedDate;
-    @Column(name="system_date")
+    @Column(name="system_date", nullable = false, length = 60)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     private Date date;
