@@ -2,19 +2,18 @@ package com.atm.model.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter @Setter
-@Entity @Builder
+@RedisHash("confirmation-token")
+@Builder
 @NoArgsConstructor @AllArgsConstructor
-public class ConfirmationToken extends BaseEntity{
-    @Column(nullable = false)
+public class ConfirmationToken implements Serializable {
     private String token;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    private LocalDateTime expiredAt;
     private LocalDateTime confirmedAt;
-    @ManyToOne
-    private User user;
+    private LocalDateTime expiresAt;
+    private String email;
 }

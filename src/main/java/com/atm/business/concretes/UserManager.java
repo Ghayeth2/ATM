@@ -67,6 +67,7 @@ public class UserManager implements UserService, UserDetailsService {
         ConfirmationToken confirmationToken = confirmationTokenServices.newConfirmationToken(user);
         confirmationTokenServices.saveConfirmationToken(confirmationToken);
 
+        log.info("is it reaching this point?");
         // TODO: Send confirmation email
         String link = "http://localhost:8080/atm/user/verify?token=" + confirmationToken.getToken();
         emailSenderServices.send(user.getEmail(),
@@ -106,8 +107,9 @@ public class UserManager implements UserService, UserDetailsService {
 
     @Override
     public User findUserByToken(String token) {
-        return confirmationTokenServices.findConfirmationToken(token)
-                .getUser();
+        return userDao.findByEmail(
+                confirmationTokenServices.findByToken(token).getEmail()
+        );
     }
 
     @SneakyThrows
