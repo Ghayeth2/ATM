@@ -1,10 +1,9 @@
 package com.atm.dao;
 
 import com.atm.model.entities.ConfirmationToken;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface ConfirmationTokenDao extends JpaRepository<ConfirmationToken, Long> {
-    Optional<ConfirmationToken> findByToken(String token);
+public interface ConfirmationTokenDao {
+    ConfirmationToken findByToken(String token);
+    boolean isExpired(String token);
+    ConfirmationToken save(ConfirmationToken token);
 }

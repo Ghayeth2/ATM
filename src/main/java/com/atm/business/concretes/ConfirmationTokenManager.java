@@ -4,18 +4,15 @@ import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.dao.ConfirmationTokenDao;
+import com.atm.dao.ConfirmationTokenDaoImpl;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,68 +32,51 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
 
     @Override
     public void saveConfirmationToken(ConfirmationToken confirmationToken) {
+        log.info("Token : "+ confirmationToken.getToken()+" "+confirmationToken.getEmail());
         confirmationTokenDao.save(confirmationToken);
     }
 
     @Override
     public ConfirmationToken newConfirmationToken(User user) {
-
         String token = UUID.randomUUID().toString();
         return ConfirmationToken.builder()
                 .token(token)
-                .createdAt(LocalDateTime.now())
-                // Minutes has to come from configuration file
-                .expiredAt(LocalDateTime.now().plusMinutes(verificationCodeExpiration))
-                .user(user)
+                .expiresAt(LocalDateTime.now().plusMinutes(verificationCodeExpiration))
+                .email(user.getEmail())
                 .build();
     }
 
     @Override
-    public ConfirmationToken findConfirmationToken(String confirmationToken) {
-        return confirmationTokenDao.findByToken(confirmationToken).orElseThrow(
-                () -> new IllegalArgumentException("Confirmation token not found")
-        );
+    public ConfirmationToken findByToken(String token) {
+        return confirmationTokenDao.findByToken(token);
     }
-
 
     @Override
-    public boolean isTokenValid(String confirmationToken) {
-        Optional<ConfirmationToken> token = confirmationTokenDao.findByToken(confirmationToken);
-        log.info("token"+ token.get().getUser().getEmail());
-        log.info("is present: "+token.isPresent());
-        if (token.isPresent()) {
-            if (token.get().getExpiredAt().isAfter(LocalDateTime.now())) {
-                log.info("valid token");
-                return true;
-            }
+    public boolean isTokenValid(String token) {
+        log.info("Token : "+ token + " is valid: "+confirmationTokenDao.isExpired(token));
+        ConfirmationToken cToken = confirmationTokenDao.findByToken(token);
+        if (cToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            return false;
         }
-        return false;
+        return true;
     }
+
 
     @Override
     public String  confirmToken(String token) throws AccountInactiveException {
         // TODO: Confirm token
-        ConfirmationToken confirmationToken = confirmationTokenDao.findByToken(token)
-                .orElseThrow(() -> new IllegalStateException("No token found!"));
-
-        if (confirmationToken.getConfirmedAt() != null)
-            throw new AccountInactiveException("Email is already confirmed!");
-
-        LocalDateTime expiresAt = confirmationToken.getExpiredAt();
-        if (expiresAt.isBefore(LocalDateTime.now())) {
-            // TODO: resend confirmation token (create new one)
-            confirmationTokenDao.save(newConfirmationToken(
-                    confirmationToken.getUser()
-            ));
-            // TODO: Resend confirmation email
-            throw new AccountInactiveException("Token is already expired, check your account" +
-                    " for new token just been sent..");
+        ConfirmationToken confirmationToken = confirmationTokenDao.findByToken(token);
+        if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new AccountInactiveException("Token expired, click resend new token to confirm your account.");
+        }
+        if (confirmationToken.getConfirmedAt() != null) {
+            throw new AccountInactiveException("Email is already confirmed.");
         }
         // Update confirmation token, confirmedAt
         confirmationToken.setConfirmedAt(LocalDateTime.now());
         confirmationTokenDao.save(confirmationToken);
         // TODO: Enable user's account
-        User user = confirmationToken.getUser();
+        User user = userAccountServices.findByEmail(confirmationToken.getEmail());
         user.setEnabled(true);
         userAccountServices.activateAccount(user);
         return "confirmed";
