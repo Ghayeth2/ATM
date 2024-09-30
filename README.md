@@ -19,7 +19,7 @@ In addition to basic user features, the system includes administrative capabilit
 ## Technical Features
 * **Bean Validation**: Ensures data integrity using annotations like `@Valid`, `@NotNull`, and `@Pattern`.
 * **Email Verification / Password Reset**: Handles user registration verification and password recovery via email.
-* **RESTful API / AJAX**: Supports dynamic content updates and REST-based backend interactions.
+* **RESTful API / Fetch API**: Supports dynamic content updates and REST-based backend interactions.
 * **Paging & Sorting**: Efficiently manages large data sets with pagination and sorting capabilities using Spring Data.
 * **Form-Login / OAuth2**: Provides both traditional form-based login and OAuth2 for third-party authentication.
 * **Internationalization**: Offers multilingual support using message bundles.
