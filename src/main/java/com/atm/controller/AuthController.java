@@ -9,7 +9,6 @@ import com.atm.model.dtos.ResetPasswordReq;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;

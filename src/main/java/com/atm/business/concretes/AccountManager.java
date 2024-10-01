@@ -8,7 +8,9 @@ import com.atm.model.dtos.AccountDto;
 import com.atm.model.enums.AccountTypes;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.User;
+import com.atm.model.enums.Currencies;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-@Service @AllArgsConstructor
+@Service @AllArgsConstructor @Log4j2
 public class AccountManager implements AccountServices {
 
     private AccountNumberGenerator numberGenerator;
@@ -25,12 +27,16 @@ public class AccountManager implements AccountServices {
     private SlugGenerator slugGenerator;
 
     @Override
-    public String save(String  accountType, User user) throws IOException {
+    public String save(String  accountType, String currency, User user) throws IOException {
+        Currencies cur = Currencies.valueOf(currency);
+        String number = numberGenerator.accountNumber();
+        log.info("Number of account: " + number+ " length: " + number.length());
         AccountTypes type = AccountTypes.valueOf(accountType);
         Account account = Account.builder()
                 .type(type.getContent())
+                .currency(cur.getSymbol())
                 .balance(0.0)
-                .number(numberGenerator.accountNumber())
+                .number(number)
                 .user(user)
         .build();
         account.setSlug(slugGenerator.slug(account.getNumber()));
@@ -54,20 +60,21 @@ public class AccountManager implements AccountServices {
 
     @Override
     public List<AccountDto> findAll(User user) {
-        // Use Pageable for breaking data
-        Account accProbe = Account.builder().user(user).build();
-        // Filtering only this user's accounts
-        Example<Account> example = Example.of(accProbe);
-        // Initializing DateFormat class
-        DateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-
-        return accountDao.findAll(example).stream().
-                map(account -> AccountDto.builder()
-//                       .type(account.getType())
-                        .createdAt(formater.format(account.getCreatedDate()))
-                       .slug(account.getSlug())
-                       .number(account.getNumber())
-                       .balance(account.getBalance())
-                .build()).toList();
+//        // Use Pageable for breaking data
+//        Account accProbe = Account.builder().user(user).build();
+//        // Filtering only this user's accounts
+//        Example<Account> example = Example.of(accProbe);
+//        // Initializing DateFormat class
+//        DateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+//
+//        return accountDao.findAll(example).stream().
+//                map(account -> AccountDto.builder()
+////                       .type(account.getType())
+//                        .createdAt(formater.format(account.getCreatedDate()))
+//                       .slug(account.getSlug())
+//                       .number(account.getNumber())
+//                       .balance(account.getBalance())
+//                .build()).toList();
+        return null;
     }
 }

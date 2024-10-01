@@ -6,6 +6,7 @@ import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.User;
+import com.atm.model.enums.Currencies;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/atm") @Log4j2
@@ -30,29 +33,29 @@ public class MainController {
     // Login page
     @GetMapping("/login")
     public String login(){
-        return "layout/login";
+        return "layout/auth/login";
     }
 
     @GetMapping("/email_confirmed")
     public String emailConfirmed(){
-        return "layout/email_confirmed";
+        return "layout/auth/email_confirmed";
     }
 
     @GetMapping("/password/forgot")
     public String forgot(){
-        return "layout/email_resetpass";
+        return "layout/auth/email_resetpass";
     }
 
     @GetMapping("/reset/password")
     public String resetPassword(){
-        return "layout/resetPassword";
+        return "layout/auth/resetPassword";
     }
 
     // Registration page
     @GetMapping("/registration")
     public String signup(Model model){
         model.addAttribute("user", new UserDto());
-        return "layout/signup";
+        return "layout/auth/signup";
     }
 
     /*
@@ -76,7 +79,7 @@ public class MainController {
         log.info("Logged in user slug model"+ userDetails.getUser().getSlug());
 //        log.info("Logged in user slug data"+ user.getSlug());
         model.addAttribute("user", user);
-        return "layout/profile";
+        return "layout/user/profile";
     }
 
     // Admin side home page

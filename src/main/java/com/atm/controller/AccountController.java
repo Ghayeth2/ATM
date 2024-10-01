@@ -5,7 +5,9 @@ import com.atm.business.abstracts.ConfigService;
 import com.atm.business.concretes.MessageServices;
 import com.atm.model.dtos.AccountDto;
 import com.atm.model.dtos.CustomUserDetailsDto;
+import com.atm.model.enums.Currencies;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,7 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/atm/accounts")
 @AllArgsConstructor
+@Log4j2
 public class AccountController {
     private AccountServices accountServices;
     private MessageServices messageServices;
@@ -28,13 +31,15 @@ public class AccountController {
     }
 
     @PostMapping
-    public String saveAccount(@RequestParam("type") String type, Model model, Authentication auth) throws IOException {
+    public String saveAccount(@RequestParam("type") String type,
+                              @RequestParam("currency") String currency,
+                              Model model, Authentication auth) throws IOException {
         // Will never enter since i controlled the <select> tag with Enumeration.
-        if (type.isEmpty()) {
+        if (type.isEmpty() || currency.isEmpty()) {
             model.addAttribute("error", messageServices.getMessage("err.accounts.type"));
             return "layout/accounts/new";
         }
-        String accountType = accountServices.save(type, ((CustomUserDetailsDto)auth.getPrincipal()).getUser());
+        String accountType = accountServices.save(type, currency, ((CustomUserDetailsDto)auth.getPrincipal()).getUser());
         // Replacing the param inside the successes.properties file to display dynamic according to selected account type
 //        configService.replaceMsgParameter("type", accountType, "scs.accounts");
         model.addAttribute("success", messageServices.getMessage("scs.accounts"));
