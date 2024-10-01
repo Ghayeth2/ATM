@@ -28,6 +28,7 @@ In addition to basic user features, the system includes administrative capabilit
 * **Account Locking / Limited Login Attempts**: Implements security features such as account locking after multiple failed login attempts.
 * **Auditing**: Tracks creation and modification timestamps using JPA auditing.
 * **Design Patterns**: Utilizes **Strategy** and **Facade** patterns for better code organization and flexibility.
+* **Dynamic .properties file**: Including dynamic **configs.properties** file for a more flexible paging feature in terms of **page size**, and for manipulating account lead and tail numbers for ensuring uniqueness.
 
 ## Requirements for Installing the Project
 * **Java 17**
