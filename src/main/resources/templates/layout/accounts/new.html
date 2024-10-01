@@ -44,6 +44,17 @@
                                                         th:text="${type.content}"></option>
                                             </select>
                                         </div>
+                                        <div class="form-group">
+                                            <label th:text="#{frm.account.currency}"></label>
+                                            <select name="currency" class="form-control">
+                                                <option
+                                                        th:each="currency : ${T(com.atm
+                                                        .model.enums.Currencies).values()}"
+                                                        th:value="${currency}"
+                                                        th:text="${currency.name}"
+                                                ></option>
+                                            </select>
+                                        </div>
 
                                     </div>
                                     <div class="card-footer text-right">

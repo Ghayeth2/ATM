@@ -1,40 +1,53 @@
 package com.atm.business.concretes;
 
 import com.atm.business.abstracts.ConfigService;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-@Service
+@Service @Log4j2
 public class ConfigManager implements ConfigService {
 
     @Override
     public void updateProperty(String key, String value) throws IOException {
-        Properties prop = new Properties();
-        String propertyFilePath = "src/main/resources/application.properties";
-        prop.load(new FileInputStream(propertyFilePath));
+        Properties prop = getProperties();
+
         prop.setProperty(key, value);
-        prop.store(new FileOutputStream(propertyFilePath), null);
+
+        try (OutputStream output = new FileOutputStream("src/main/resources/dynamic-configs.properties")) {
+            prop.store(output, null);
+        }
+    }
+
+    @Override
+    public Properties getProperties() throws IOException {
+        Properties prop = new Properties();
+        try(InputStream input = new FileInputStream("src/main/resources/dynamic-configs.properties")){
+            prop.load(input);
+        }
+        return prop;
     }
 
     @Override
     public void updateLeadTailNumbers(String lead, String tail) throws IOException {
         if (tail.contentEquals("9999")){
+            log.info("numbers in contentEquals(\"9999\") tail "+tail);
             updateProperty("account.tail.number", "0000");
             int leadN = Integer.parseInt(lead);
             leadN++;
             lead = String.format("%04d", leadN);
+            log.info("numbers in contentEquals(\"9999\") lead "+lead);
             updateProperty("account.lead.number", lead);
         } else {
             int tailN = Integer.parseInt(tail);
             tailN++;
             tail = String.format("%04d", tailN);
+            log.info("numbers in else config servis "+tail);
             updateProperty("account.tail.number", tail);
         }
     }

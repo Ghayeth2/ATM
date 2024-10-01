@@ -13,5 +13,5 @@ public interface AccountServices  {
     String delete(String slug);
     List<AccountDto> findAll(User user);
     Account findBySlug(String slug);
-    String save(String accountType, User user) throws IOException;
+    String save(String accountType, String currency, User user) throws IOException;
 }
