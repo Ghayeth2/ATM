@@ -30,7 +30,7 @@
                     <span th:text="#{sidebar.accounts}"></span></a>
                 <ul class="dropdown-menu">
                     <li ><a th:href="@{/atm/accounts/new}" class="nav-link" th:text="#{sidebar.accounts.new}" ></a></li>
-                    <li ><a class="nav-link" th:text="#{sidebar.accounts.all}"></a></li><!-- send notifications if account is accessed.
+                    <li ><a class="nav-link" th:href="@{/atm/accounts}" th:text="#{sidebar.accounts.all}"></a></li><!-- send notifications if account is accessed.
                      set password for account etc.-->
                 </ul>
             </li>

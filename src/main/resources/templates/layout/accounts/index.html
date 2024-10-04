@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<!-- Head & css links -->
+<head th:replace="~{fragments/headFragment::head-section}">
+</head>
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div>
+        <!-- Navbar -->
+        <nav th:replace="~{fragments/navbarFragment::nav-section}"></nav>
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebarFragment::sidebar-section}"></div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-header">
+
+                    <div class="fa-align-left">
+                        <label for="from" th:text="#{frm.start.date}"> </label> <br>
+                        <input id="from" type="date" class="date-input">
+                    </div>
+                    <div class="fa-align-right">
+                        <label for="to" th:text="#{frm.end.date}"> </label> <br>
+                        <input id="to" type="date" class="date-input">
+                    </div>
+                    <button id="applyDates" class="btn btn-primary float-right"
+                            th:text="#{blt.dates.apply}"></button>
+                    <button id="resetDatesBtn" class="btn btn-outline-dark float-right"
+                            th:text="#{blt.dates.reset}"></button>
+                    <div class="card align-content-end float-right ">
+                        <div class="dropdown d-inline mr-2">
+                            <button class="btn btn-primary dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Sort by
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="sortByButton">
+                                <a class="dropdown-item" href="#" data-sort="number">Account number</a>
+                                <a class="dropdown-item" href="#" data-sort="type">Account type</a>
+                                <a class="dropdown-item" href="#" data-sort="createdDate">Created Date</a>
+                                <a class="dropdown-item" href="#" data-sort="balance">Account balance</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="dropdown d-inline mr-2">
+                            <button class="btn btn-primary dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Sorting order
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="sortOrderButton">
+                                <a class="dropdown-item" href="#" data-order="asc">Ascending order</a>
+                                <a class="dropdown-item" href="#" data-order="desc">Descending order</a>
+                            </div>
+                        </div>
+                        <button id="applySortBtn" class="btn btn-primary">Apply Sorting</button>
+                    </div>
+                </div>
+
+
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div id="getResultDiv"></div>
+                                <div class="card-header">
+                                    <h4 th:text="#{acconts.tbls.title}"></h4>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" th:text="#{accounts.tbls.createAt}"></th>
+                                            <th scope="col" th:text="#{accounts.tbls.currency}"></th>
+                                            <th scope="col" th:text="#{accounts.tbls.number}"></th>
+                                            <th scope="col" th:text="#{accounts.tbls.balance}"></th>
+                                            <th scope="col" th:text="#{accounts.tbls.type}"></th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="accountsTableBody">
+
+
+                                        </tbody>
+                                    </table>
+
+                                    <div class="card">
+                                        <div class="card-header">
+                                        </div>
+                                        <div class="card-body">
+                                            <nav aria-label="Page navigation example">
+                                                <ul class="pagination">
+                                                    <li class="page-item"><a class="page-link"
+                                                                             id="prevPage">Previous</a>
+                                                    </li>
+                                                    <li class="page-item"><a id="currentPage" class="page-link"
+                                                                             href="#"></a>
+                                                    </li>
+                                                    <li class="page-item"><a class="page-link" id="nextPage">Next</a>
+                                                    </li>
+                                                    <li class="page-item"><a id="totalPages" class="page-link" href="#">Next</a>
+                                                    </li>
+
+                                                </ul>
+
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footerFragment::footer-section}"></footer>
+        <!-- Js-links -->
+        <div th:replace="~{fragments/footFragment::js-links}"></div>
+    </div>
+</div>
+</body>
+<script>
+    document.getElementById('resetDatesBtn').addEventListener('click', function () {
+        // Select all input elements of type 'date'
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Loop through each input and set its value to an empty string
+        dateInputs.forEach(input => {
+            input.value = '';
+        });
+    });
+</script>
+</html>
