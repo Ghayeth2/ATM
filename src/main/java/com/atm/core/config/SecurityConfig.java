@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -45,7 +46,7 @@ public class SecurityConfig  {
 
                 Best practice is to leave it enabled
                  */
-//                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests()
                 .requestMatchers(
                         // The problem was from the security chain. I missed mentioning POST URL
@@ -53,7 +54,7 @@ public class SecurityConfig  {
                         "/atm/registration?success","/atm/user/**","/atm", "/assets/js/**",
                         "/assets/css/**", "/assets/img/**", "/assets/fonts/**",
                         "/assets/modules/**", "/public/**", "/atm/password/forgot",
-                        "/atm/login", "/atm/email_confirmed", "/atm/reset/password"
+                        "/atm/login", "/atm/email_confirmed", "/atm/reset/password", "/api/accounts**"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

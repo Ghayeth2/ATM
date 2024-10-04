@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class AtmApplication {
 
 	public static void main(String[] args) {
-		System.setProperty("spring.devtools.restart.enabled", "false");
+//		System.setProperty("spring.devtools.restart.enabled", "false");
 		SpringApplication.run(AtmApplication.class, args);
 	}
 

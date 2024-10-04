@@ -30,6 +30,11 @@ public class AccountController {
         return "layout/accounts/new";
     }
 
+    @GetMapping
+    public String index(){
+        return "layout/accounts/index";
+    }
+
     @PostMapping
     public String saveAccount(@RequestParam("type") String type,
                               @RequestParam("currency") String currency,
