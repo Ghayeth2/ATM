@@ -9,6 +9,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
@@ -16,8 +17,7 @@ public class RedisConfig {
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName("localhost");
-        config.setPort(6379);
+        // No need to configure Redis on localhost, Spring Boot automatically does that for localhost:6379
         return new JedisConnectionFactory(config);
     }
 
