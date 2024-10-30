@@ -9,7 +9,7 @@ import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.core.utils.strings_generators.SlugGenerator;
-import com.atm.dao.abstracts.UserDao;
+import com.atm.dao.daos.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;

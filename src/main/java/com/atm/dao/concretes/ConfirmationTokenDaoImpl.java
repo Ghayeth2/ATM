@@ -1,6 +1,6 @@
 package com.atm.dao.concretes;
 
-import com.atm.dao.abstracts.ConfirmationTokenDao;
+import com.atm.dao.daos.ConfirmationTokenDao;
 import com.atm.model.entities.ConfirmationToken;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

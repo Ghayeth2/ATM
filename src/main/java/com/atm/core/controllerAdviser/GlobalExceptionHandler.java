@@ -62,9 +62,16 @@ public class GlobalExceptionHandler {
         return "redirect:/atm/profile";
     }
 
-    @ExceptionHandler(Exception.class)
-    public String handleException(Exception ex, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
-        return "redirect:/atm/login";
-    }
+    /*
+    Here's why the postman kept redirecting me to Login page.
+    in here i am handling all Exceptions that might occur, and redirecting to login page
+
+    Here is a bug that should not be added at all in case of mistake like mine.
+    Never catch Exception, only the ones u r targeting.
+     */
+//    @ExceptionHandler(Exception.class)
+//    public String handleException(Exception ex, RedirectAttributes redirectAttributes) {
+//        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+//        return "redirect:/atm/login";
+//    }
 }

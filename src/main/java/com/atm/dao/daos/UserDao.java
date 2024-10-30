@@ -1,4 +1,4 @@
-package com.atm.dao.abstracts;
+package com.atm.dao.daos;
 
 import com.atm.model.dtos.AccountsUsers;
 import com.atm.model.entities.User;
@@ -40,7 +40,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     @Query("UPDATE User u SET u.failedAttempts = ?1 WHERE u.email = ?2")
     @Modifying
-    void updateFailedAttempts(int failAttempts, String email);
+    int updateFailedAttempts(int failAttempts, String email);
 
     @Query("from User u join Account a")
     Optional<Object[]> findUsersAndAccounts();

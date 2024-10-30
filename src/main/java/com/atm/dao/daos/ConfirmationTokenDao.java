@@ -1,4 +1,4 @@
-package com.atm.dao.abstracts;
+package com.atm.dao.daos;
 
 import com.atm.model.entities.ConfirmationToken;
 
