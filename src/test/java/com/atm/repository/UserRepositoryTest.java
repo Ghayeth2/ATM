@@ -15,7 +15,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
+
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @ActiveProfiles("test")
@@ -44,7 +48,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void findByEmail() {
+    void itShouldFindByEmail() {
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
                 .accountNonLocked(1).enabled(false).failedAttempts(0)
@@ -54,6 +58,47 @@ public class UserRepositoryTest {
         userDao.save(user);
         User foundUser = userDao.findByEmail("test@atm.com");
         Assertions.assertNotNull(foundUser);
+    }
+
+    @Test
+    void itShouldDeleteUser() {
+        // Arrange
+        User user = User.builder()
+                .email("test@atm.com").firstName("first").lastName("last")
+                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .password("password")
+                .build();
+        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        // Act
+        userDao.save(user);
+        userDao.delete(user);
+        boolean exists = userDao.existsByEmail("test@atm.com");
+        // Assert
+        Assertions.assertFalse(exists);
+    }
+
+    @Test
+    void itShouldFindAll() {
+        // Arrange
+        User user = User.builder()
+                .email("test@atm.com").firstName("first").lastName("last")
+                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .password("password")
+                .build();
+        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        User user1 = User.builder()
+                .email("atm@atm.com").firstName("first").lastName("last")
+                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .password("password")
+                .build();
+        user1.setSlug(new SlugGenerator().slug("atm@atm.com"));
+        Iterable<User> users = Arrays.asList(user, user1);
+        // Act
+        userDao.saveAll(users);
+        List<User> foundUsers = userDao.findAll();
+        // Assert
+        Assertions.assertNotNull(foundUsers);
+        Assertions.assertEquals(2, foundUsers.size());
     }
 
     @Test
