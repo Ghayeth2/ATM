@@ -9,6 +9,7 @@ In addition to basic user features, the system includes administrative capabilit
 * **Java 17**
 * **Spring Boot**
 * **Spring Data JPA**
+* **Hibernate**
 * **Spring Security**
 * **Spring MVC**
 * **Thymeleaf**
