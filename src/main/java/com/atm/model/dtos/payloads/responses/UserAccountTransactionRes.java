@@ -1,4 +1,4 @@
-package com.atm.model.dtos;
+package com.atm.model.dtos.payloads.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

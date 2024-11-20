@@ -5,7 +5,7 @@ import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
 import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.core.exceptions.EmailExistsException;
-import com.atm.model.dtos.ResetPasswordReq;
+import com.atm.model.dtos.payloads.requests.ResetPasswordReq;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;

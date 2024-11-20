@@ -1,9 +1,8 @@
-package com.atm.model.dtos;
+package com.atm.model.dtos.payloads.responses;
 
-import com.atm.model.enums.AccountTypes;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Builder @Getter @Setter
@@ -12,9 +11,9 @@ import java.util.Date;
 public class AccountDto {
     private String slug;
     private String currency;
-    private Date createdDate;
     private String number;
     private double balance;
     private String type;
+    private LocalDateTime createdDate;
 
 }

@@ -2,11 +2,13 @@ package com.atm.business.concretes;
 
 import com.atm.business.abstracts.AccountServices;
 import com.atm.business.abstracts.ConfigService;
-import com.atm.core.utils.converter.DateFormat;
+import com.atm.core.utils.converter.DateFormatConverter;
 import com.atm.core.utils.strings_generators.AccountNumberGenerator;
 import com.atm.core.utils.strings_generators.SlugGenerator;
-import com.atm.dao.abstracts.AccountDao;
-import com.atm.model.dtos.AccountDto;
+import com.atm.criterias.AccountCriteria;
+import com.atm.dao.daos.AccountDao;
+import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
+import com.atm.model.dtos.payloads.responses.AccountDto;
 import com.atm.model.enums.AccountTypes;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.User;
@@ -19,20 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service @AllArgsConstructor @Log4j2
 public class AccountManager implements AccountServices {
 
+    private final AccountCriteria accountCriteria;
+    private DateFormatConverter formatter;
     private AccountNumberGenerator numberGenerator;
-    private DateFormat dateFormat;
     private AccountDao accountDao;
     private SlugGenerator slugGenerator;
     // Getting latest updated value of page size from property file
@@ -79,43 +76,51 @@ public class AccountManager implements AccountServices {
     public Page<AccountDto> findAll(Long user, int page, String searchQuery,
                                     String sortBy, String order, String  from, String  to) throws IOException, ParseException {
 
+
         // Fetching page size from dynamic-configs.properties file
         int pageSize = Integer.parseInt(configService.getProperties().getProperty("page.size"));
+
         // If Dates are not sat by user, use default dates (within a month ago)
-        Date startDate;
-        Date endDate;
+        LocalDateTime startDate;
+        LocalDateTime endDate;
         if (from.isEmpty() && to.isEmpty()) {
-            Calendar calendar = Calendar.getInstance();
-
-            // Set endDate to today's date and truncate to yyyy-MM-dd (midnight)
-            endDate = truncateToDate(calendar.getTime());
-
-            // Subtract one month for the startDate and truncate to yyyy-MM-dd (midnight)
-            calendar.add(Calendar.MONTH, -1);
-            startDate = truncateToDate(calendar.getTime());
-            log.info("Start date: " + startDate);
-            log.info("End date: " + endDate);
+            LocalDateTime monthAgo = LocalDateTime.now();
+            monthAgo = monthAgo.minusMonths(1);
+            startDate = formatter.formatRequestDate(monthAgo);
+            endDate = formatter.formatRequestDate(LocalDateTime.now());
         } else {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            startDate = formatter.parse(from);
-            endDate = formatter.parse(to);
+            startDate = formatter.formatRequestDate(from);
+            endDate = formatter.formatRequestDate(to);
         }
         // Setting the sort order and by parameters (if no sort is chosen by user) default sort is By create date in descending order
-        Sort sort;
-        if (!order.isEmpty())
-            sort = order.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        else
-            sort = Sort.by("createdDate").descending();
+        // sort by: default(createdDate), type, balance, number
+        if (sortBy.isEmpty() && order.isEmpty()) {
+            sortBy = "created_date";
+            order = "desc";
+        }
         // Setting the page requirements (offset & size) and setting the sort value.
-        log.info("page size : " + pageSize);
-        Pageable pageable = PageRequest.of(page - 1, pageSize, sort);
-        // Calling custom dao method to retrieve accounts
-        return accountDao.findAllPaginatedAndFiltered(pageable, user, searchQuery, startDate, endDate );
+
+        AccountCriteriaRequest request = AccountCriteriaRequest.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .userId(user)
+                .searchQuery(searchQuery)
+                .sortBy(sortBy)
+                .sortOrder(order)
+                .build();
+
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+
+        return accountCriteria.findAllPaginatedAndFiltered(pageable, request);
+//        return accountDao.findAll(pageable).map(account ->
+//                AccountDto.builder()
+//                        .createdDate(formatter.formatDate(account.getCreatedDate()))
+//                        .slug(account.getSlug())
+//                        .type(account.getType())
+//                        .number(account.getNumber())
+//                        .currency(account.getCurrency())
+//                        .build());
+
     }
 
-    private static Date truncateToDate(Date date) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = formatter.format(date); // Convert Date to yyyy-MM-dd format string
-        return formatter.parse(formattedDate); // Convert the string back to a Date (with time 00:00:00)
-    }
 }

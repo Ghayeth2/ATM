@@ -1,7 +1,7 @@
 package com.atm.business.concretes;
 
 import com.atm.business.abstracts.RoleServices;
-import com.atm.dao.abstracts.RoleDao;
+import com.atm.dao.daos.RoleDao;
 import com.atm.model.entities.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

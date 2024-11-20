@@ -1,4 +1,4 @@
-package com.atm.repository;
+package com.atm.units.repository;
 
 import com.atm.core.config.TestAuditingConfig;
 import com.atm.core.utils.strings_generators.SlugGenerator;
@@ -32,7 +32,7 @@ public class UserRepositoryTest {
     private EntityManager entityManager;
 
     @Test
-    void itShouldSaveUser() {
+    void shouldSaveUser_WhenUserIsProvided() {
         // Arrange
         User user = User.builder()
                 .password("password").firstName("first").lastName("last")
@@ -48,7 +48,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void itShouldFindByEmail() {
+    void shouldFindUser_WhenEmailIsProvided() {
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
                 .accountNonLocked(1).enabled(false).failedAttempts(0)
@@ -61,7 +61,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void itShouldDeleteUser() {
+    void shouldDeleteUser_WhenUserIsProvided() {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
@@ -78,7 +78,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void itShouldFindAll() {
+    void shouldReturnUsers_WhenFindAllIsCalled() {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
@@ -102,7 +102,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void itShouldExistByEmail() {
+    void shouldReturnIfExists_WhenEmailIsProvided() {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
@@ -118,7 +118,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void itShouldUpdateFailedAttempts() {
+    void shouldUpdateFailedAttempts_WhenFailedAttemptsIsProvided() {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")

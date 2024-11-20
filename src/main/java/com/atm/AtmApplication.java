@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 //        org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class}
 //)
 @SpringBootApplication
-// Enabling audtiting
+// Stop Jpa Auditing when testing Redis codes
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class AtmApplication {
 

@@ -1,7 +1,5 @@
-package com.atm.model.dtos;
+package com.atm.model.dtos.payloads.requests;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

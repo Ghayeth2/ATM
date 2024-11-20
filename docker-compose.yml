@@ -6,3 +6,23 @@ services:
     ports:
       - "6379:6379"
     restart: always
+
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+    restart: always
+
+  db:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: atm
+    volumes:
+      - data:/var/lib/mysql
+
+volumes:
+  data:

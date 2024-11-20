@@ -1,7 +1,7 @@
 package com.atm.business.concretes;
 
 import com.atm.business.abstracts.UserAccountServices;
-import com.atm.dao.abstracts.UserDao;
+import com.atm.dao.daos.UserDao;
 import com.atm.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

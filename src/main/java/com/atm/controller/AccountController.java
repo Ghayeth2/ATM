@@ -1,11 +1,8 @@
 package com.atm.controller;
 
 import com.atm.business.abstracts.AccountServices;
-import com.atm.business.abstracts.ConfigService;
 import com.atm.business.concretes.MessageServices;
-import com.atm.model.dtos.AccountDto;
 import com.atm.model.dtos.CustomUserDetailsDto;
-import com.atm.model.enums.Currencies;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
@@ -14,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.Principal;
 
 @Controller
 @RequestMapping("/atm/accounts")
