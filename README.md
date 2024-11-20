@@ -9,11 +9,15 @@ In addition to basic user features, the system includes administrative capabilit
 * **Java 17**
 * **Spring Boot**
 * **Spring Data JPA**
+* **Hibernate**
 * **Spring Security**
 * **Spring MVC**
 * **Thymeleaf**
 * **MySQL**
 * **Redis**
+* **Docker**
+* **JUnit**
+* **Integration Testing**
 * **MailDev**
 
 ## Technical Features
@@ -22,7 +26,6 @@ In addition to basic user features, the system includes administrative capabilit
 * **RESTful API / AJAX**: Supports dynamic content updates and REST-based backend interactions.
 * **Paging & Sorting**: Efficiently manages large data sets with pagination and sorting capabilities using Spring Data.
 * **Form-Login / OAuth2**: Provides both traditional form-based login and OAuth2 for third-party authentication.
-* **Internationalization**: Offers multilingual support using message bundles.
 * **Centralized Resource Bundles**: Organized resource bundles (`messages.properties`, `errors.properties`, `validations.properties`, etc.) for easy management of localized content.
 * **Global Exception Handler**: Centralized error handling across the application using `@ControllerAdvice` and `@ExceptionHandler`.
 * **Account Locking / Limited Login Attempts**: Implements security features such as account locking after multiple failed login attempts.
