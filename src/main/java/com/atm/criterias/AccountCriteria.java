@@ -61,7 +61,7 @@ public class AccountCriteria {
             log.info("Search query: {}", req.getSearchQuery());
             Predicate orPredicate = builder.or(
                     builder.like(root.get("number"), "%"+ req.getSearchQuery() + "%"),
-                    builder.like(root.get("type"), "%"+ req.getSearchQuery() +"%"),
+                    builder.like(builder.lower(root.get("type")), "%"+ req.getSearchQuery().toLowerCase() +"%"),
                     builder.like(root.get("currency"), "%" + req.getSearchQuery() + "%")
             );
             predicates.add(orPredicate);
