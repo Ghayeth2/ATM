@@ -150,8 +150,9 @@ public class UserManager implements UserService, UserDetailsService {
     }
 
 
+    @SneakyThrows
     @Override
-    public String update(UserDetailsDto userDto, String slug) throws PasswordMisMatchException {
+    public String update(UserDetailsDto userDto, String slug) {
         User user = userDao.findByEmail(userDto.getEmail());
         if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword()))
             throw new PasswordMisMatchException(
