@@ -25,6 +25,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,56 +34,85 @@ import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
-@Service @Log4j2
+@Service
+@Log4j2
 public class UserManager implements UserService, UserDetailsService {
     private UserDao userDao;
     private DtoEntityConverter converter;
-    private PasswordEncoderBean passwordEncoder;
     private MessageServices messageServices;
     private ConfirmationTokenServices confirmationTokenServices;
-    // TODO: SRP > Role DAO is violating it
     private RoleServices roleServices;
+    private BCryptPasswordEncoder passwordEncoder;
     private EmailSenderServices emailSenderServices;
+    private UserNameExistsValidator userNameExistsValidator;
 
 
     @SneakyThrows
     @Override
-    public String save(UserDto userDto)  {
-        if (new UserNameExistsValidator(userDao).validate(userDto.getEmail()))
-            throw new EmailExistsException(messageServices.getMessage("err.email.exists"));
-        User user = (User) converter.dtoToEntity(userDto, new User());
-        // Encrypting password
-        user.setPassword(passwordEncoder.passwordEncoder().encode(user.getPassword()));
-        user.setEnabled(false);
-        user.setAccountNonLocked(1);
-        // if no users, first role is Admin
+    public String save(UserDto userDto) {
+        // Checking if username exists
+        validateEmail(userDto.getEmail());
+        // Converting userDto to User model
+        User user = getUser(userDto);
+        // Assign role to user
+        assignRole(user);
+        // Save the new user
+        userDao.save(user);
+        // Create and Save confirmation token
+        String token = createAndSaveToken(user);
+        // Send confirmation email
+        sendEmail(token, user);
+
+        return token;
+    }
+
+    // User private Helper orchestrated methods
+
+    private void sendEmail(String token, User user) {
+        String link = "http://localhost:8080/atm/user/verify?token=" + token;
+        emailSenderServices.send(user.getEmail(),
+                buildConfirmEmailBody(user.getFirstName() + " " + user.getLastName(),
+                        link));
+    }
+
+    private String createAndSaveToken(User user) {
+        ConfirmationToken confirmationToken = confirmationTokenServices.newConfirmationToken(user);
+        confirmationTokenServices.saveConfirmationToken(confirmationToken);
+        return confirmationToken.getToken();
+    }
+
+    private void assignRole(User user) {
         if (userDao.count() == 0)
             user.setRoles(List.of(roleServices.getOrCreateRole("ROLE_ADMIN")));
         else
             user.setRoles(List.of(roleServices.getOrCreateRole("ROLE_USER")));
+    }
+
+    private User getUser(UserDto userDto) {
+        User user = (User) converter.dtoToEntity(userDto, new User());
+        // Encrypting password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        user.setEnabled(false);
+        user.setAccountNonLocked(1);
         user.setSlug(new SlugGenerator().slug(userDto.getEmail()));
-        userDao.save(user);
+        return user;
+    }
 
-//        // TODO: create confirmation token
-        ConfirmationToken confirmationToken = confirmationTokenServices.newConfirmationToken(user);
-        confirmationTokenServices.saveConfirmationToken(confirmationToken);
-
-        log.info("is it reaching this point?");
-        // TODO: Send confirmation email
-        String link = "http://localhost:8080/atm/user/verify?token=" + confirmationToken.getToken();
-        emailSenderServices.send(user.getEmail(),
-                buildConfirmEmailBody(user.getFirstName() + " " + user.getLastName(),
-                        link));
-        return confirmationToken.getToken();
+    private void validateEmail(String email) throws EmailExistsException {
+        if (userNameExistsValidator.validate(email))
+            throw new EmailExistsException(messageServices.getMessage("err.email.exists"));
     }
 
     private String buildConfirmEmailBody(String name, String link) {
-        return  "<p> Hi, "+ name + ", </p>"+
-                "<p>Thank you for registering with us,"+"" +
-                "Please, follow the link below to complete your registration.</p>"+
-                "<a href=\"" + link + "\">Verify your email to activate your account</a>"+
+        return "<p> Hi, " + name + ", </p>" +
+                "<p>Thank you for registering with us," + "" +
+                "Please, follow the link below to complete your registration.</p>" +
+                "<a href=\"" + link + "\">Verify your email to activate your account</a>" +
                 "<p> Thank you <br> Users Registration Portal Service";
     }
+
+    // User private Helper orchestrated methods
 
     @Override
     public UserDto findByEmail(String email) {
@@ -94,13 +124,11 @@ public class UserManager implements UserService, UserDetailsService {
     @Override
     public void resetPasswordSender(String email) {
         User user = userDao.findByEmail(email);
-        ConfirmationToken cToken = confirmationTokenServices.newConfirmationToken(user);
-        // it should be in temp memory Redis
-        confirmationTokenServices.saveConfirmationToken(cToken);
-//        log.info("Generated token reset : "+cToken.getCreatedAt()+ " " + cToken.getExpiredAt());
-        String link = "http://localhost:8080/atm/user/reset?token=" + cToken.getToken();
-        String message = "<p>Please, follow the link to reset your password."+"" +
-                "</p>"+
+        // Create and save confirmation token
+        String token = createAndSaveToken(user);
+        String link = "http://localhost:8080/atm/user/reset?token=" + token;
+        String message = "<p>Please, follow the link to reset your password." + "" +
+                "</p>" +
                 "<a href=\"" + link + "\">Reset Password</a>";
         emailSenderServices.send(user.getEmail(), message);
     }
@@ -116,24 +144,23 @@ public class UserManager implements UserService, UserDetailsService {
     @Override
     public String resetPassword(String password, String slug) {
         User user = userDao.findBySlug(slug).get();
-        user.setPassword(passwordEncoder.passwordEncoder().encode(password));
+        user.setPassword(PasswordEncoderBean.passwordEncoder().encode(password));
         userDao.save(user);
         return "Password reset successfully";
     }
 
 
     @Override
-    public String update(UserDetailsDto userDto, String slug) {
+    public String update(UserDetailsDto userDto, String slug) throws PasswordMisMatchException {
         User user = userDao.findByEmail(userDto.getEmail());
-        if (!passwordEncoder.passwordEncoder().matches(userDto.getPassword(), user.getPassword()))
-            try {
-                throw new PasswordMisMatchException(messageServices.getMessage("err.psd.mismatch"));
-            } catch (PasswordMisMatchException e) {
-                throw new RuntimeException(e);
-            }
+        if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword()))
+            throw new PasswordMisMatchException(
+                    messageServices.getMessage("err.psd.mismatch"));
+
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        return userDao.save(user)+" your details are updated";
+        userDao.save(user);
+        return " your details are updated";
     }
 
     @Override
@@ -154,18 +181,19 @@ public class UserManager implements UserService, UserDetailsService {
         return user.get();
     }
 
+
     @Override
     public List<UserDto> findAll() {
         return userDao.findAll()
                 // convert to DTO using Stream API
                 .stream().map(
-                user -> UserDto.builder()
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .email(user.getEmail())
-                        .slug(user.getSlug())
-                        .build()
-        ).collect(Collectors.toList());
+                        user -> UserDto.builder()
+                                .firstName(user.getFirstName())
+                                .lastName(user.getLastName())
+                                .email(user.getEmail())
+                                .slug(user.getSlug())
+                                .build()
+                ).collect(Collectors.toList());
     }
 
     @Override
@@ -178,11 +206,4 @@ public class UserManager implements UserService, UserDetailsService {
 
     }
 
-    // Mapping Roles GrantedAuthority // SRP Violation
-    public List<? extends GrantedAuthority> mapRolesToAuthorities(List<Role> roles){
-        return roles.stream().map(
-                // Changing Roles to SimpleGrantedAuthority Object
-                role ->  new SimpleGrantedAuthority(role.getName())
-        ).collect(Collectors.toList());
-    }
 }

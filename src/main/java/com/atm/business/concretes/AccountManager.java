@@ -28,10 +28,7 @@ import java.util.Optional;
 public class AccountManager implements AccountServices {
 
     private final AccountCriteria accountCriteria;
-    private DateFormatConverter formatter;
-    private AccountNumberGenerator numberGenerator;
     private AccountDao accountDao;
-    private SlugGenerator slugGenerator;
     // Getting latest updated value of page size from property file
     // Not using @Value of spring since it only loads data at the time of running the app no more
     private ConfigService configService;
@@ -39,7 +36,7 @@ public class AccountManager implements AccountServices {
     @Override
     public String save(String  accountType, String currency, User user) throws IOException {
         Currencies cur = Currencies.valueOf(currency);
-        String number = numberGenerator.accountNumber();
+        String number = new AccountNumberGenerator().accountNumber();
         log.info("Number of account: " + number+ " length: " + number.length());
         AccountTypes type = AccountTypes.valueOf(accountType);
         Account account = Account.builder()
@@ -49,7 +46,7 @@ public class AccountManager implements AccountServices {
                 .number(number)
                 .user(user)
         .build();
-        account.setSlug(slugGenerator.slug(account.getNumber()));
+        account.setSlug(new SlugGenerator().slug(account.getNumber()));
         accountDao.save(account);
         return type.getContent();
     }
@@ -76,7 +73,8 @@ public class AccountManager implements AccountServices {
     public Page<AccountDto> findAll(Long user, int page, String searchQuery,
                                     String sortBy, String order, String  from, String  to) throws IOException, ParseException {
 
-
+        // Date formatter
+        DateFormatConverter formatter = new DateFormatConverter();
         // Fetching page size from dynamic-configs.properties file
         int pageSize = Integer.parseInt(configService.getProperties().getProperty("page.size"));
 

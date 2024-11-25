@@ -266,7 +266,7 @@ public class AccountCriteriaTest {
         // TODO: when searching by type, u should match cases 4 both (table & search query)
         // It is working, but now we r dealing directly with tables. So no ignoreCase() method.
         List<AccountDto> res = accountCriteria.findAllPaginatedAndFiltered(
-                pageable, new AccountCriteriaRequest("vings", 1L,
+                pageable, new AccountCriteriaRequest("Sa", 1L,
                         "createdDate", "desc",
                         startDate,
                         endDate)
