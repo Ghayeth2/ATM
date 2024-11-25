@@ -3,6 +3,7 @@ package com.atm.business.concretes;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.entities.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional
 public class UserAccountServicesManager implements UserAccountServices {
@@ -50,6 +52,7 @@ public class UserAccountServicesManager implements UserAccountServices {
         long lockTimeInMillis = user.getLockTime().getTime();
         long currentTimeInMillis = System.currentTimeMillis();
         if (lockTimeInMillis + LOCK_TIME_DURATION < currentTimeInMillis) {
+//            log.info("is it entering here?");
             user.setAccountNonLocked(1);
             user.setLockTime(null);
             user.setFailedAttempts(0);
