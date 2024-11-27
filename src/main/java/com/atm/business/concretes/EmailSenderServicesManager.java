@@ -25,7 +25,7 @@ public class EmailSenderServicesManager implements EmailSenderServices {
     private final JavaMailSender mailSender;
 
     @Override
-    @Async
+    @Async // working in background using its own thread
     public void send(String to, String email) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();

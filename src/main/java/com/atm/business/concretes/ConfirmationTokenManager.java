@@ -31,7 +31,8 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
 
     @Override
     public void saveConfirmationToken(ConfirmationToken confirmationToken) {
-        log.info("Token : "+ confirmationToken.getToken()+" "+confirmationToken.getEmail());
+        log.info("Token : "+
+                confirmationToken.getToken()+" "+confirmationToken.getEmail());
         confirmationTokenDao.save(confirmationToken);
     }
 
@@ -52,21 +53,22 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
 
     @Override
     public boolean isTokenValid(String token) {
-        log.info("Token : "+ token + " is valid: "+confirmationTokenDao.isExpired(token));
         ConfirmationToken cToken = confirmationTokenDao.findByToken(token);
-        if (cToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            return false;
-        }
-        return true;
+        return !cToken.getExpiresAt().isBefore(
+                LocalDateTime.now()
+        );
     }
 
 
     @Override
     public String  confirmToken(String token) throws AccountInactiveException {
         // TODO: Confirm token
-        ConfirmationToken confirmationToken = confirmationTokenDao.findByToken(token);
+        ConfirmationToken confirmationToken =
+                confirmationTokenDao.findByToken(token);
         if (confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new AccountInactiveException("Token expired, click resend new token to confirm your account.");
+            throw new AccountInactiveException(
+                    "Token expired, click resend " +
+                            "new token to confirm your account.");
         }
         if (confirmationToken.getConfirmedAt() != null) {
             throw new AccountInactiveException("Email is already confirmed.");
@@ -74,11 +76,7 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
         // Update confirmation token, confirmedAt
         confirmationToken.setConfirmedAt(LocalDateTime.now());
         confirmationTokenDao.save(confirmationToken);
-        // TODO: Enable user's account
-        User user = userAccountServices.findByEmail(confirmationToken.getEmail());
-        user.setEnabled(true);
-        userAccountServices.activateAccount(user);
-        return "confirmed";
+        return token;
     }
 
 

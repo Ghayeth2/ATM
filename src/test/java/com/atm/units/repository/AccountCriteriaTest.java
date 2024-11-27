@@ -53,19 +53,25 @@ Same for DateFormatConverter, it is a util class not a JPA repo.
         DateFormatConverter.class,
         SlugGenerator.class})
 public class AccountCriteriaTest {
+
     @Autowired
     private SlugGenerator slug;
+
     @Autowired
     private AccountCriteria accountCriteria;
+
     @Autowired
     private UserDao userDao;
+
     @Autowired
     private DateFormatConverter formatter;
+
     @Autowired
     private AccountDao accountDao;
     private List<Account> accounts = new ArrayList<>();
     private User user;
     private User usr;
+
     @BeforeEach
     void setUp() {
         // setting up two users for accounts lists

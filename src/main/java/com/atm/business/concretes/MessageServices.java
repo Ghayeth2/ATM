@@ -14,10 +14,12 @@ public class MessageServices {
 
     // Hello + Auth Username (object) User
     public String getMessage(String code, Object[] args) {
-        return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+        return messageSource.getMessage(code, args,
+                LocaleContextHolder.getLocale());
     }
 
     public String getMessage(String code) {
-        return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+        return messageSource.getMessage(code,
+                null, LocaleContextHolder.getLocale());
     }
 }

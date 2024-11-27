@@ -1,7 +1,10 @@
 package com.atm.units.service;
 
+import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.concretes.UserAccountServicesManager;
+import com.atm.dao.daos.ConfirmationTokenDao;
 import com.atm.dao.daos.UserDao;
+import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -18,9 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +29,9 @@ public class UserAccountManagerTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private ConfirmationTokenServices tokenServices;
 
     @InjectMocks
     private UserAccountServicesManager userAccountServicesManager;
@@ -105,14 +109,16 @@ public class UserAccountManagerTest {
     @Test
     void shouldActivateUserAccount_WhenEmailIsVerified() {
         // Arrange
+        ConfirmationToken token = ConfirmationToken.builder().token("token")
+                .email("test@gmail.com")
+                .build();
         User user = User.builder().firstName("first").lastName("last")
                 .email("email@gmail.com").password("pass").build();
         user.setId(1L);
-        // when Triggered doSomething / doNothing
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(user));
-        // Calling the service
-        userAccountServicesManager.activateAccount(user);
-        // Assert it has reached userDao.save()
-        Mockito.verify(userDao).save(ArgumentMatchers.eq(user));
+        when(tokenServices.findByToken(anyString())).thenReturn(token);
+        when(userDao.findByEmail(token.getEmail())).thenReturn(user);
+        userAccountServicesManager.activateAccount(token.getToken());
+        verify(userDao).save(ArgumentMatchers
+                .argThat(User::isEnabled));
     }
 }

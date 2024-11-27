@@ -8,5 +8,5 @@ public interface UserAccountServices {
     void lock(User user);
     boolean unlockWhenTimeExpired(User user);
     User findByEmail(String email);
-    void activateAccount(User user);
+    void activateAccount(String token);
 }

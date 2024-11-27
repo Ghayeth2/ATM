@@ -1,6 +1,7 @@
 package com.atm.controller;
 
 import com.atm.business.abstracts.ConfirmationTokenServices;
+import com.atm.business.abstracts.UserAccountServices;
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
 import com.atm.core.exceptions.AccountInactiveException;
@@ -27,6 +28,7 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private MessageServices messageServices;
+    private UserAccountServices userAccountServices;
     private UserService userService;
     private ConfirmationTokenServices confirmationTokenServices;
 
@@ -106,6 +108,7 @@ public class AuthController {
     @GetMapping("/verify")
     public String verify(@RequestParam("token") String token, RedirectAttributes ra) throws AccountInactiveException {
        confirmationTokenServices.confirmToken(token);
+       userAccountServices.activateAccount(token);
        ra.addFlashAttribute("illegal", false);
         log.info("Email confirmation redirecting to email_confirmed html template...");
        // TODO: Configure a template where u show that email is verified & redirect into login form that template.

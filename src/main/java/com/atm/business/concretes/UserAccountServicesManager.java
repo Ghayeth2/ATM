@@ -1,5 +1,6 @@
 package com.atm.business.concretes;
 
+import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.entities.User;
@@ -17,12 +18,15 @@ import java.util.Optional;
 @Transactional
 public class UserAccountServicesManager implements UserAccountServices {
     private UserDao userDao;
+    private ConfirmationTokenServices tokenService;
     public static final int MAX_FAILED_ATTEMPTS = 3;
     private static final long LOCK_TIME_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
     @Autowired
-    public UserAccountServicesManager(UserDao userDao) {
+    public UserAccountServicesManager(UserDao userDao,
+                                      ConfirmationTokenServices tokenService) {
         this.userDao = userDao;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -68,11 +72,13 @@ public class UserAccountServicesManager implements UserAccountServices {
     }
 
     @Override
-    public void activateAccount(User user) {
-        Optional<User> userOptional = userDao.findById(user.getId());
-        if (userOptional.isPresent()) {
-            userDao.save(user);
-        }
+    public void activateAccount(String token) {
+        Optional<User> userOptional = Optional.of(userDao.findByEmail(
+                tokenService.findByToken(token)
+                        .getEmail()
+        ));
+        userOptional.get().setEnabled(true);
+        userOptional.ifPresent(user -> userDao.save(user));
     }
 
 
