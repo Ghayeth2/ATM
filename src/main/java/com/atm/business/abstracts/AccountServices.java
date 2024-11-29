@@ -16,5 +16,5 @@ public interface AccountServices  {
                              String sortBy, String order, String  from,
                              String  to) throws IOException, ParseException;
     Account findBySlug(String slug);
-    String save(String accountType, String currency, User user) throws IOException;
+    void save(String accountType, String currency, User user) throws IOException;
 }

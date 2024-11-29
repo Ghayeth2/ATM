@@ -34,21 +34,20 @@ public class AccountManager implements AccountServices {
     private ConfigService configService;
 
     @Override
-    public String save(String  accountType, String currency, User user) throws IOException {
+    public void save(String  accountType, String currency, User user) throws IOException {
         Currencies cur = Currencies.valueOf(currency);
         String number = new AccountNumberGenerator().accountNumber();
         log.info("Number of account: " + number+ " length: " + number.length());
         AccountTypes type = AccountTypes.valueOf(accountType);
         Account account = Account.builder()
                 .type(type.getContent())
-                .currency(cur.getSymbol())
+                .currency(cur.getName())
                 .balance(0.0)
                 .number(number)
                 .user(user)
         .build();
         account.setSlug(new SlugGenerator().slug(account.getNumber()));
         accountDao.save(account);
-        return type.getContent();
     }
 
 
@@ -70,13 +69,20 @@ public class AccountManager implements AccountServices {
     }
 
     @Override
-    public Page<AccountDto> findAll(Long user, int page, String searchQuery,
-                                    String sortBy, String order, String  from, String  to) throws IOException, ParseException {
+    public Page<AccountDto> findAll(Long user,
+                                    int page,
+                                    String searchQuery,
+                                    String sortBy,
+                                    String order,
+                                    String  from,
+                                    String  to) throws IOException, ParseException {
 
         // Date formatter
         DateFormatConverter formatter = new DateFormatConverter();
         // Fetching page size from dynamic-configs.properties file
-        int pageSize = Integer.parseInt(configService.getProperties().getProperty("page.size"));
+
+        int pageSize = Integer.parseInt(configService.
+                getProperties().getProperty("page.size"));
 
         // If Dates are not sat by user, use default dates (within a month ago)
         LocalDateTime startDate;
@@ -85,6 +91,7 @@ public class AccountManager implements AccountServices {
             LocalDateTime monthAgo = LocalDateTime.now();
             monthAgo = monthAgo.minusMonths(1);
             startDate = formatter.formatRequestDate(monthAgo);
+//            log.info("startDate: " + startDate);
             endDate = formatter.formatRequestDate(LocalDateTime.now());
         } else {
             startDate = formatter.formatRequestDate(from);
@@ -93,9 +100,10 @@ public class AccountManager implements AccountServices {
         // Setting the sort order and by parameters (if no sort is chosen by user) default sort is By create date in descending order
         // sort by: default(createdDate), type, balance, number
         if (sortBy.isEmpty() && order.isEmpty()) {
-            sortBy = "created_date";
+            sortBy = "createdDate";
             order = "desc";
         }
+//        log.info("sortBy: " + sortBy + " order: " + order);
         // Setting the page requirements (offset & size) and setting the sort value.
 
         AccountCriteriaRequest request = AccountCriteriaRequest.builder()
@@ -106,7 +114,7 @@ public class AccountManager implements AccountServices {
                 .sortBy(sortBy)
                 .sortOrder(order)
                 .build();
-
+        log.info("sortBy: "+ request.getSortBy());
         Pageable pageable = PageRequest.of(page - 1, pageSize);
 
         return accountCriteria.findAllPaginatedAndFiltered(pageable, request);

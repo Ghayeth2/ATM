@@ -19,14 +19,11 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
 
     private static final Logger log = LoggerFactory.getLogger(ConfirmationTokenManager.class);
     private final ConfirmationTokenDao confirmationTokenDao;
-    private final UserAccountServices userAccountServices;
     @Value("${verification.code.expiration}")
     int verificationCodeExpiration;
 
-    public ConfirmationTokenManager(ConfirmationTokenDao confirmationTokenDao,
-                                    UserAccountServices userAccountServices) {
+    public ConfirmationTokenManager(ConfirmationTokenDao confirmationTokenDao) {
         this.confirmationTokenDao = confirmationTokenDao;
-        this.userAccountServices = userAccountServices;
     }
 
     @Override

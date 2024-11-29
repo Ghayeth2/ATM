@@ -40,7 +40,7 @@ public class AccountController {
             model.addAttribute("error", messageServices.getMessage("err.accounts.type"));
             return "layout/accounts/new";
         }
-        String accountType = accountServices.save(type, currency, ((CustomUserDetailsDto)auth.getPrincipal()).getUser());
+        accountServices.save(type, currency, ((CustomUserDetailsDto)auth.getPrincipal()).getUser());
         // Replacing the param inside the successes.properties file to display dynamic according to selected account type
 //        configService.replaceMsgParameter("type", accountType, "scs.accounts");
         model.addAttribute("success", messageServices.getMessage("scs.accounts"));

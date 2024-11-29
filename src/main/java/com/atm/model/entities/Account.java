@@ -14,7 +14,7 @@ public class Account extends IntermidateBaseEntity{
     @Column(unique = true, nullable = false, length = 20)
     private String number;
     private double balance;
-    @Column(length = 8)
+    @Column(length = 30)
     private String currency;
     @Column(nullable = false)
     private String type;
