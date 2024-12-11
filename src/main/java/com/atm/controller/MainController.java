@@ -17,11 +17,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Arrays;
 
+/**
+ * MainController class is not handling
+ * any SRP at all, needs to be fixed
+ * and isolating each service alone
+ * u might call it PublicController
+ * to render public views.
+ */
+
 @Controller
 @RequestMapping("/atm") @Log4j2
 public class MainController {
-    @Autowired
-    private UserService userService;
     @Autowired
     private DtoEntityConverter converter;
 
@@ -37,7 +43,12 @@ public class MainController {
     }
 
     @GetMapping("/email_confirmed")
-    public String emailConfirmed(){
+    public String emailConfirmed(Model model){
+        if (!model.containsAttribute("illegal")
+        || !model.containsAttribute("message")){
+            model.addAttribute("illegal", false);
+            model.addAttribute("message", "");
+        }
         return "layout/auth/email_confirmed";
     }
 

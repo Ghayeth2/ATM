@@ -63,7 +63,7 @@ public class UserManager implements UserService, UserDetailsService {
         // Send confirmation email
         sendEmail(token, user);
 
-        return token;
+        return messageServices.getMessage("scs.user.signup");
     }
 
     // User private Helper orchestrated methods
@@ -161,7 +161,7 @@ public class UserManager implements UserService, UserDetailsService {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         userDao.save(user);
-        return " your details are updated";
+        return messageServices.getMessage("scs.profile.update");
     }
 
     @Override

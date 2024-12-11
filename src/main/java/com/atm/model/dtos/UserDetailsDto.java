@@ -20,6 +20,7 @@ public class UserDetailsDto {
 
     @NotEmpty(message = "{valid.not.empty}")
     private String lastName;
+    @Email(message = "Enter email formatted text")
     private String email;
     private String password;
 }

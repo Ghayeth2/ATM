@@ -13,6 +13,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+/**
+ *
+ */
+
 @Data @Entity @Table(name = "users")
 @NamedEntityGraph @Builder
 @Log4j2 @NoArgsConstructor
@@ -25,6 +29,12 @@ public class User extends IntermidateBaseEntity {
     @Column(nullable = false, length = 50, unique = true)
     private String email;
     @Column(nullable = false)
+    /**
+     * Always annotate passwords & any critical attributes
+     * with @JsonIgnore so that u r not leaking any
+     * security details
+     */
+    @JsonIgnore
     private String password;
     private boolean enabled;
     @Column(name = "account_non_locked" )

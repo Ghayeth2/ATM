@@ -73,7 +73,7 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
         // Update confirmation token, confirmedAt
         confirmationToken.setConfirmedAt(LocalDateTime.now());
         confirmationTokenDao.save(confirmationToken);
-        return token;
+        return "Email is confirmed.";
     }
 
 

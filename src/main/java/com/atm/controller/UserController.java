@@ -26,23 +26,21 @@ public class UserController {
     private MessageServices messageServices;
 
     @PostMapping
-    public String update(@Valid @ModelAttribute("user") UserDetailsDto userDto, BindingResult bindingResult
-    , RedirectAttributes redirectAttributes, Model model,
+    public String update(@Valid @ModelAttribute("user")
+                             UserDetailsDto userDto,
+                         BindingResult bindingResult
+    , RedirectAttributes redirectAttributes,
                          Authentication auth) throws Exception {
-        CustomUserDetailsDto userDetails =  (CustomUserDetailsDto) auth.getPrincipal();
+        CustomUserDetailsDto userDetails =
+                (CustomUserDetailsDto) auth.getPrincipal();
         String slug = userDetails.getUser().getSlug();
         if (bindingResult.hasErrors()) {
-//            model.addAttribute("user", userDto);
-//            log.error("User slug in update controller:: " + slug);
-            log.error("Error in user update"+bindingResult.getAllErrors());
-
-            return "layout/profile";
+            return "layout/user/profile";
         }
         userDto.setEmail(userDetails.getUser().getEmail());
-        userService.update(userDto, slug);
-        log.info("User profile update section is it called??");
+        String res = userService.update(userDto, slug);
         redirectAttributes.addFlashAttribute("success",
-                messageServices.getMessage("scs.profile.update"));
+                res);
         return "redirect:/atm/profile";
     }
 }
