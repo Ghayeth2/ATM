@@ -24,9 +24,9 @@ users.page.size
  */
 @RestController @Log4j2 @AllArgsConstructor
 @RequestMapping("/api/accounts")
+
 public class AccountsApi {
     private AccountServices accountServices;
-    private DateFormatConverter dateFormatConverter;
 
     @DeleteMapping
     public ResponseEntity<?> delete(@RequestParam("slug") String slug) {
@@ -48,11 +48,15 @@ public class AccountsApi {
         CustomUserDetailsDto userDto = (CustomUserDetailsDto) auth.getPrincipal();
 //        log.info("request : "+page+" "+searchQuery+" "+sortBy+" "+order+" "+from+" "+to);
 
+        log.info("Calling findAll with user ID: " + userDto.getUser().getId());
 
         Map<String, Object> response = new HashMap<>();
+        log.info("It is being reached this far before crashing!!!!");
         Page<AccountDto> accounts = accountServices.findAll(userDto.getUser().getId(),page, searchQuery,
                 sortBy, order, from, to);
-//        log.info("total pages: " + accounts.getTotalPages());
+        log.info("accounts: "+accounts);
+
+        log.info("total pages: " + accounts.getSize());
         response.put("totalPages", accounts.getTotalPages());
         response.put("totalElements", accounts.getTotalElements());
         response.put("accounts", accounts.getContent());

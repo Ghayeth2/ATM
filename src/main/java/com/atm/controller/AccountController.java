@@ -37,13 +37,17 @@ public class AccountController {
                               Model model, Authentication auth) throws IOException {
         // Will never enter since i controlled the <select> tag with Enumeration.
         if (type.isEmpty() || currency.isEmpty()) {
-            model.addAttribute("error", messageServices.getMessage("err.accounts.type"));
+            model.addAttribute("error",
+                    messageServices.getMessage("err.accounts.type"));
             return "layout/accounts/new";
         }
-        accountServices.save(type, currency, ((CustomUserDetailsDto)auth.getPrincipal()).getUser());
+        accountServices.save(type,
+                currency,
+                ((CustomUserDetailsDto)auth.getPrincipal()).getUser());
         // Replacing the param inside the successes.properties file to display dynamic according to selected account type
 //        configService.replaceMsgParameter("type", accountType, "scs.accounts");
-        model.addAttribute("success", messageServices.getMessage("scs.accounts"));
+        model.addAttribute("success",
+                messageServices.getMessage("scs.accounts"));
         return "layout/accounts/new";
     }
 
