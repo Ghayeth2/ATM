@@ -1,10 +1,8 @@
 package com.atm.units.service;
 
-import com.atm.business.abstracts.ConfirmationTokenServices;
-import com.atm.business.abstracts.EmailSenderServices;
-import com.atm.business.abstracts.RoleServices;
-import com.atm.business.abstracts.UserService;
+import com.atm.business.abstracts.*;
 import com.atm.business.concretes.MessageServices;
+import com.atm.business.concretes.TempUserManager;
 import com.atm.business.concretes.UserManager;
 import com.atm.core.bean.PasswordEncoderBean;
 import com.atm.core.exceptions.EmailExistsException;
@@ -13,6 +11,7 @@ import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.core.utils.validators.UserNameExistsValidator;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
+import com.atm.model.dtos.TempUser;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
@@ -65,105 +64,38 @@ public class UserManagerTest {
     @Mock
     private EmailSenderServices emailServices;
 
+    @Mock
+    private TempUserServices tempUserServices;
+
     @InjectMocks
     private UserManager userManager;
 
-    // Testing UserNameExistsValidator is working
-    @Test
-    void shouldThrowUserExistsException_WhenExistedEmailIsProvided() {
-        // Arrange - only need the email to test throwing exception
-        UserDto userDto = UserDto.builder()
-                .email("test@gmail.com").build();
-        // When userNameValidator is called Return that it exists
-        when(userNameValidator.validate("test@gmail.com"))
-                .thenReturn(true);
-        // When the messageServices is extracting errMsg, return my msg
-        // So that I can expect what the message will be => assert the test
-        when(messageServices.getMessage("err.email.exists"))
-                .thenReturn("Username already exists");
-        // Invoke & throw my expected exception
-        // Calling my service method, assuring exception is thrown
-        EmailExistsException ex = Assertions.
-                assertThrows(EmailExistsException.class, () -> {
-            userManager.save(userDto);
-        });
-        // Assert the result
-        Assertions.assertEquals("Username already exists",
-                ex.getMessage());
-    }
-
-    private String mailBody(String name, String link) {
-        return "<p> Hi, "+ name + ", </p>"+
-                "<p>Thank you for registering with us,"+"" +
-                "Please, follow the link below to complete your registration.</p>"+
-                "<a href=\"" + link + "\">Verify your email to activate your account</a>"+
-                "<p> Thank you <br> Users Registration Portal Service";
-    }
-
-    /*
-        Ok, so can't test doesn't throw for userManager.save()
-        cuz, it won't throw & will continue with userManager.save()
-        Meaning: Exact case as testing userManager.save()
+    /**
+     * Saving user object test
      */
     @Test
     void shouldSaveUser_WhenUserDtoIsProvided() {
-        // Arrange fake userDto data with only Email
-        UserDto userDto = UserDto.builder()
-                .email("test@gmail.com").firstName("first")
-                .lastName("last").password("pass").build();
-        // Arranging fake user model
-        User user = User.builder()
-                .firstName(userDto.getFirstName())
-                .lastName(userDto.getLastName())
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .enabled(false).accountNonLocked(1)
+        // Fake role
+        Role role = new Role("ROLE_ADMIN");
+        // preparing fake temp user
+        TempUser temp = TempUser.builder().email("test@gmail.com")
+                .firstName("fir").lastName("las").password("pas")
                 .build();
-        user.setSlug("slug");
-        // When calling validate email
-        when(userNameValidator.validate(userDto.getEmail())).thenReturn(false);
-        when(converter.dtoToEntity(userDto, new User()))
-                .thenReturn(
-                        user
-                );
-        when(PasswordEncoderBean.passwordEncoder())
-                .thenReturn(new BCryptPasswordEncoder());
-        // When checking for any past users
+        // mocking temp user findByToken
+        when(tempUserServices.findByToken(anyString()))
+                .thenReturn(temp);
+        // mocking updateNotConfirmed value of tempUser
+        doNothing().when(tempUserServices).updateNotConfirmed(anyString());
+        // mocking password encoder
+        when(passwordEncoder.encode(anyString())).thenReturn("pas");
+        // Returning users count 0 to mock assigning role
         when(userDao.count()).thenReturn(0L);
-        // When get or creating Role
-        when(roleServices.getOrCreateRole("ROLE_ADMIN"))
-                .thenReturn(new Role("ROLE_ADMIN"));
-        // I am not expecting any response from userDao after saving the entity
-        when(userDao.save(any(User.class))).thenReturn(user);
-        ConfirmationToken token = ConfirmationToken.builder()
-                .token("token").email(user.getEmail()).build();
-        when(cServices.newConfirmationToken(any(User.class)))
-                .thenReturn(token);
-        // Setting the link for mocking
-        // TODO: Note:
-        /*
-            When testing mock service, I should do as the actual service
-            do & expect. Down bellow, my actual service (mail sending)
-            was expecting mail-message with link + token.
-
-            I did create the token, but missed sending it to mock service
-            which ran the actual service with (NULL) for token. Therefore,
-            there was a mismatch in arguments. In Mocking I used "token"
-            as a value of ConfirmationToken, but when called the userSave()
-            I did not send a token, so it went as NULL.
-         */
-        String link = "http://localhost:8080/atm/user/verify?token=" + token.getToken();
-        doNothing().when(cServices).saveConfirmationToken(any(ConfirmationToken.class));
-        doNothing().when(emailServices).send(user.getEmail()
-                , mailBody(
-                        user.getFirstName()+" "+user.getLastName(),
-                        link
-                ));
-        // No err-msg will be returned
-        // Asserting no exception was thrown
-        // Executable >> Interface >> Lambda
-        String result = userManager.save(userDto);
-        Assertions.assertEquals(token.getToken(), result);
+        // Returning mocked role
+        when(roleServices.getOrCreateRole(anyString())).thenReturn(role);
+        // Calling the under-test method
+        userManager.save("token");
+        // Verifying test is reaching last line of the service
+        verify(userDao, times(1)).save(any(User.class));
     }
 
     // findByEmail
@@ -206,7 +138,7 @@ public class UserManagerTest {
                 "<a href=\"" + link + "\">Reset Password</a>";
         // Act
         when(userDao.findByEmail(any())).thenReturn(user);
-        when(cServices.newConfirmationToken(any(User.class)))
+        when(cServices.newConfirmationToken(anyString()))
                 .thenReturn(token);
         doNothing().when(cServices).saveConfirmationToken(any(ConfirmationToken.class));
         doNothing().when(emailServices).send(user.getEmail(), message);

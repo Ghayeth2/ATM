@@ -36,7 +36,7 @@ public class UserRepositoryTest {
         // Arrange
         User user = User.builder()
                 .password("password").firstName("first").lastName("last")
-                .accountNonLocked(1).failedAttempts(0).enabled(false)
+                .accountNonLocked(1).failedAttempts(0)
                 .email("user@user.com")
                 .build();
         user.setSlug(new SlugGenerator().slug("user@user.com"));
@@ -51,7 +51,7 @@ public class UserRepositoryTest {
     void shouldFindUser_WhenEmailIsProvided() {
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
-                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
         user.setSlug(new SlugGenerator().slug("test@atm.com"));
@@ -65,7 +65,7 @@ public class UserRepositoryTest {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
-                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
         user.setSlug(new SlugGenerator().slug("test@atm.com"));
@@ -82,13 +82,13 @@ public class UserRepositoryTest {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
-                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
         user.setSlug(new SlugGenerator().slug("test@atm.com"));
         User user1 = User.builder()
                 .email("atm@atm.com").firstName("first").lastName("last")
-                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
         user1.setSlug(new SlugGenerator().slug("atm@atm.com"));
@@ -106,7 +106,7 @@ public class UserRepositoryTest {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
-                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
         user.setSlug(new SlugGenerator().slug("test@atm.com"));
@@ -122,7 +122,7 @@ public class UserRepositoryTest {
         // Arrange
         User user = User.builder()
                 .email("test@atm.com").firstName("first").lastName("last")
-                .accountNonLocked(1).enabled(false).failedAttempts(0)
+                .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
         user.setSlug(new SlugGenerator().slug("test@atm.com"));

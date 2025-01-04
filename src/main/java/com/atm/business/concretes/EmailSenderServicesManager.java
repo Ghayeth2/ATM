@@ -34,7 +34,7 @@ public class EmailSenderServicesManager implements EmailSenderServices {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("hello@amigoscode.com");
+            helper.setFrom("simulator@atm.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             LOGGER.error("failed to send email", e);

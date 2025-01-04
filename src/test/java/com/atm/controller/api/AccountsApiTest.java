@@ -66,6 +66,9 @@ class AccountsApiTest {
 
     @Test
     @SneakyThrows
+    // All user authentication process (Manual one)
+    // can be replaced with only one annotation @WithMockUser()
+    // nad its parameters
     void accountApiController_FindAll() {
         User user = User.builder().email("esaf")
                 .password("apds").firstName("afds")

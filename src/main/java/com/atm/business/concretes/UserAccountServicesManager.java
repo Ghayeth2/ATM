@@ -71,15 +71,15 @@ public class UserAccountServicesManager implements UserAccountServices {
         return userDao.findByEmail(email);
     }
 
-    @Override
-    public void activateAccount(String token) {
-        Optional<User> userOptional = Optional.of(userDao.findByEmail(
-                tokenService.findByToken(token)
-                        .getEmail()
-        ));
-        userOptional.get().setEnabled(true);
-        userOptional.ifPresent(user -> userDao.save(user));
-    }
+//    @Override
+//    public void activateAccount(String token) {
+//        Optional<User> userOptional = Optional.of(userDao.findByEmail(
+//                tokenService.findByToken(token)
+//                        .getEmail()
+//        ));
+//        userOptional.get().setEnabled(true);
+//        userOptional.ifPresent(user -> userDao.save(user));
+//    }
 
 
 }

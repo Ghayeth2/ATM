@@ -1,9 +1,11 @@
 package com.atm.core.config;
 
+import com.atm.business.abstracts.TempUserServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
 import com.atm.business.concretes.UserAccountServicesManager;
+import com.atm.model.dtos.TempUser;
 import com.atm.model.entities.User;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @Log4j2
@@ -23,6 +26,7 @@ public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHan
 
     private final UserAccountServices userAccountServices;
     private final MessageServices messageServices;
+    private final TempUserServices tempUserServices;
     // Do i need to store redirecting routes in separated file?? properties??
     // yes i do, in case of base routes changes (/atm/login >> /atm/v*/login)
     private String BASE_URL;
@@ -31,9 +35,11 @@ public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHan
 //    private String ACCOUNT_INACTIVE_URL = "/atm/login?inactive";
 
     public LoginFailureHandlerConfig(UserAccountServices userAccountServices,
-                                     MessageServices messageServices) {
+                                     MessageServices messageServices,
+                                     TempUserServices tempUserServices) {
         this.userAccountServices = userAccountServices;
         this.messageServices = messageServices;
+        this.tempUserServices = tempUserServices;
 
     }
 
@@ -48,11 +54,14 @@ public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHan
                                         AuthenticationException exception) throws IOException, ServletException {
         String email = request.getParameter("username");
         User user = userAccountServices.findByEmail(email);
-        if (user != null) {
-            if (!user.isEnabled()){
+        Optional<TempUser> temp = tempUserServices.findByUsername(email);
+        if (temp.isPresent()) {
+            if (temp.get().isNotConfirmed()){
                 response.sendRedirect(BASE_URL+"inactive");
                 return;
             }
+        }
+        if (user != null) {
             if (user.getAccountNonLocked() == 1) {
                 if (user.getFailedAttempts() < UserAccountServicesManager.MAX_FAILED_ATTEMPTS - 1) {
                     userAccountServices.increaseFailedAttempts(user);

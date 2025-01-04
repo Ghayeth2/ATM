@@ -4,6 +4,7 @@ import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.dao.daos.ConfirmationTokenDao;
+import com.atm.model.dtos.TempUser;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;
 import org.slf4j.Logger;
@@ -28,18 +29,19 @@ public class ConfirmationTokenManager implements ConfirmationTokenServices {
 
     @Override
     public void saveConfirmationToken(ConfirmationToken confirmationToken) {
-        log.info("Token : "+
-                confirmationToken.getToken()+" "+confirmationToken.getEmail());
+        System.out.println(confirmationToken.getToken()+" " +
+                "is saved to Redis Server for "+ confirmationToken.getEmail());
         confirmationTokenDao.save(confirmationToken);
     }
 
     @Override
-    public ConfirmationToken newConfirmationToken(User user) {
+    public ConfirmationToken newConfirmationToken(String email) {
+        System.out.println("Token is created for "+email);
         String token = UUID.randomUUID().toString();
         return ConfirmationToken.builder()
                 .token(token)
                 .expiresAt(LocalDateTime.now().plusMinutes(verificationCodeExpiration))
-                .email(user.getEmail())
+                .email(email)
                 .build();
     }
 

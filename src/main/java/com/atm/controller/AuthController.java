@@ -1,6 +1,7 @@
 package com.atm.controller;
 
 import com.atm.business.abstracts.ConfirmationTokenServices;
+import com.atm.business.abstracts.TempUserServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
@@ -27,8 +28,8 @@ import jakarta.validation.Valid;
 @AllArgsConstructor
 public class AuthController {
 
-    private UserAccountServices userAccountServices;
     private UserService userService;
+    private TempUserServices tempUserServices;
     private ConfirmationTokenServices confirmationTokenServices;
 
     @PostMapping
@@ -44,9 +45,7 @@ public class AuthController {
 //            log.error("An error occurred!");
             return "layout/auth/signup";
         }
-//        log.info("well is it being called??");
-//        log.info("Success " + userDto);
-        String successMessage = userService.save(userDto);
+        String successMessage = tempUserServices.save(userDto);
         redirectAttributes.addFlashAttribute("success",
                 successMessage);
         return "redirect:/atm/registration";
@@ -79,17 +78,6 @@ public class AuthController {
         return "redirect:/atm/reset/password";
     }
 
-    /* I just heard about Redis client & its usages, won't use it in this project cuz
-    I couldn't change the structure of this project without having the project fails to start
-    I will start new project with clean structure & use everything in it.
-    controller BaseController (middleWares, handlers, renders, api)
-
-    routes (centralized routes with DRY principle)
-
-    CRUD Services interface
-
-     */
-
     // validating token, redirecting to reset password page / error page
     // All tokens should be stored in Redis client for temp usages.
     @GetMapping("/reset")
@@ -100,7 +88,7 @@ public class AuthController {
             // To bind user to the new token
             User user = userService.findUserByToken(token);
             ConfirmationToken tkn = confirmationTokenServices
-                    .newConfirmationToken(user);
+                    .newConfirmationToken(user.getEmail());
             confirmationTokenServices.saveConfirmationToken(tkn);
             model.addAttribute("password_obj",
                     new ResetPasswordReq());
@@ -117,7 +105,7 @@ public class AuthController {
                          RedirectAttributes ra)
             throws AccountInactiveException {
        String res = confirmationTokenServices.confirmToken(token);
-       userAccountServices.activateAccount(token);
+       userService.save(token);
        ra.addFlashAttribute("illegal", false);
        ra.addFlashAttribute("message", res);
         return "redirect:/atm/email_confirmed";

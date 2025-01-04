@@ -78,14 +78,14 @@ public class AccountCriteriaTest {
         user = User.builder()
                 .email("ghayeth@gmail.com").firstName("Ghayeth")
                 .lastName("almasri").password("pass")
-                .accountNonLocked(1).failedAttempts(0).enabled(false)
+                .accountNonLocked(1).failedAttempts(0)
                 .build();
         user.setSlug("user-slug");
         // 2nd user
         usr = User.builder()
                 .email("muhammad@gmail.com").firstName("muhammad")
                 .lastName("almasri").password("pass")
-                .accountNonLocked(1).failedAttempts(0).enabled(false)
+                .accountNonLocked(1).failedAttempts(0)
                 .build();
         usr.setSlug("usr-slug");
         // Creating two user accounts

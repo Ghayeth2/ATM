@@ -105,20 +105,4 @@ public class UserAccountManagerTest {
         Assertions.assertThat(res).isNotNull();
     }
 
-    // activating the account
-    @Test
-    void shouldActivateUserAccount_WhenEmailIsVerified() {
-        // Arrange
-        ConfirmationToken token = ConfirmationToken.builder().token("token")
-                .email("test@gmail.com")
-                .build();
-        User user = User.builder().firstName("first").lastName("last")
-                .email("email@gmail.com").password("pass").build();
-        user.setId(1L);
-        when(tokenServices.findByToken(anyString())).thenReturn(token);
-        when(userDao.findByEmail(token.getEmail())).thenReturn(user);
-        userAccountServicesManager.activateAccount(token.getToken());
-        verify(userDao).save(ArgumentMatchers
-                .argThat(User::isEnabled));
-    }
 }

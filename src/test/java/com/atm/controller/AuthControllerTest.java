@@ -1,6 +1,7 @@
 package com.atm.controller;
 
 import com.atm.business.abstracts.ConfirmationTokenServices;
+import com.atm.business.abstracts.TempUserServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
@@ -46,6 +47,9 @@ class AuthControllerTest {
     private MessageServices messageServices;
 
     @MockBean
+    private TempUserServices tempUserServices;
+
+    @MockBean
     private UserAccountServices userAccountServices;
 
     @MockBean
@@ -61,7 +65,7 @@ class AuthControllerTest {
     @SneakyThrows
     void authController_SaveUser_ValidUserIsGiven() {
         String successMessage = "Success";
-        given(userService.save(any())).willReturn(successMessage);
+        when(tempUserServices.save(any())).thenReturn(successMessage);
         mockMvc.perform(post(prefix)
                 .param("firstName", "first")
                 .param("lastName", "last")
@@ -170,6 +174,6 @@ class AuthControllerTest {
                 .andExpect(flash().attributeCount(2))
                 .andExpect(redirectedUrl("/atm/email_confirmed"));
         when(cTokenServices.confirmToken(anyString())).thenReturn("Confirmed");
-        doNothing().when(userAccountServices).activateAccount(anyString());
+        doNothing().when(userService).save(anyString());
     }
 }

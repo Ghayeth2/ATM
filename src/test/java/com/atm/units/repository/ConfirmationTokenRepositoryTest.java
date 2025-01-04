@@ -1,12 +1,15 @@
 package com.atm.units.repository;
 
 
+import com.atm.EmbeddedRedisConnection;
 import com.atm.dao.concretes.ConfirmationTokenDaoImpl;
 import com.atm.dao.daos.ConfirmationTokenDao;
 import com.atm.model.entities.ConfirmationToken;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
@@ -19,9 +22,12 @@ import java.util.UUID;
 
 // it is unit testing, so i can test this one with H2DATABASE too
 
+/**
+ * Test class for Repo of confirmation token working with Redis Server
+ */
 @DataRedisTest
 @Import(ConfirmationTokenDaoImpl.class)
-public class ConfirmationTokenRepositoryTest {
+public class ConfirmationTokenRepositoryTest extends EmbeddedRedisConnection {
     /*
     U need to include embedded-redis in pom.xml
     and since u r working with redis, u need to
@@ -32,18 +38,15 @@ public class ConfirmationTokenRepositoryTest {
     And u can inject ur ConfirmationTokenDao bean
     to complete the test.
      */
-    private static RedisServer redisServer;
+//    private static RedisServer redisServer;
     private static String token;
     private static ConfirmationToken cToken;
 
     @Autowired
     private ConfirmationTokenDao tokenDao;
 
-    @BeforeAll // equivalent for @BeforeClass
-    static void beforeTests() throws Exception {
-        // Start redis server with default port
-        redisServer = new RedisServer(6379);
-        redisServer.start();
+    @BeforeEach // equivalent for @BeforeClass
+     void beforeTests() throws Exception {
         // Create unique token
         token = UUID.randomUUID().toString();
         // Fill confirmation token object
@@ -51,11 +54,6 @@ public class ConfirmationTokenRepositoryTest {
                 .token(token).email("test-redis@atm.com")
                 .expiresAt(LocalDateTime.now().plusMinutes(1))
                 .build();
-    }
-
-    @AfterAll // equivalent for @AfterClass
-    static void shutDownRedisServer() throws Exception {
-        redisServer.stop();
     }
 
     @Test

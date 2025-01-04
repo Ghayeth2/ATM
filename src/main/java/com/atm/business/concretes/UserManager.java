@@ -1,9 +1,6 @@
 package com.atm.business.concretes;
 
-import com.atm.business.abstracts.ConfirmationTokenServices;
-import com.atm.business.abstracts.EmailSenderServices;
-import com.atm.business.abstracts.RoleServices;
-import com.atm.business.abstracts.UserService;
+import com.atm.business.abstracts.*;
 import com.atm.core.bean.PasswordEncoderBean;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
@@ -11,12 +8,14 @@ import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.core.utils.strings_generators.SlugGenerator;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
+import com.atm.model.dtos.TempUser;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
 import com.atm.core.utils.validators.UserNameExistsValidator;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -42,74 +41,48 @@ public class UserManager implements UserService, UserDetailsService {
     private MessageServices messageServices;
     private ConfirmationTokenServices confirmationTokenServices;
     private RoleServices roleServices;
+    private TempUserServices tempUserServices;
     private BCryptPasswordEncoder passwordEncoder;
     private EmailSenderServices emailSenderServices;
-    private UserNameExistsValidator userNameExistsValidator;
 
 
     @SneakyThrows
     @Override
-    public String save(UserDto userDto) {
-        // Checking if username exists
-        validateEmail(userDto.getEmail());
-        // Converting userDto to User model
-        User user = getUser(userDto);
+
+    public void save(String token) {
+        // Extracting user details from Temp Memory
+        User user = getUser(token);
         // Assign role to user
         assignRole(user);
         // Save the new user
+        System.out.println("user to be saved:"+
+                user.getRoles()+" "+user.getSlug()
+        +" "+user.getFirstName());
         userDao.save(user);
-        // Create and Save confirmation token
-        String token = createAndSaveToken(user);
-        // Send confirmation email
-        sendEmail(token, user);
-
-        return messageServices.getMessage("scs.user.signup");
+        System.out.println("After user is saved if it is reaching here..");
     }
 
     // User private Helper orchestrated methods
 
-    private void sendEmail(String token, User user) {
-        String link = "http://localhost:8080/atm/user/verify?token=" + token;
-        emailSenderServices.send(user.getEmail(),
-                buildConfirmEmailBody(user.getFirstName() + " " + user.getLastName(),
-                        link));
-    }
-
-    private String createAndSaveToken(User user) {
-        ConfirmationToken confirmationToken = confirmationTokenServices.newConfirmationToken(user);
-        confirmationTokenServices.saveConfirmationToken(confirmationToken);
-        return confirmationToken.getToken();
-    }
-
     private void assignRole(User user) {
         if (userDao.count() == 0)
-            user.setRoles(List.of(roleServices.getOrCreateRole("ROLE_ADMIN")));
+            user.setRoles(List.of(roleServices
+                    .getOrCreateRole("ROLE_ADMIN")));
         else
             user.setRoles(List.of(roleServices.getOrCreateRole("ROLE_USER")));
     }
 
-    private User getUser(UserDto userDto) {
-        User user = (User) converter.dtoToEntity(userDto, new User());
-        // Encrypting password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        user.setEnabled(false);
+    private User getUser(String token) {
+        //
+        TempUser temp = tempUserServices.findByToken(token);
+        tempUserServices.updateNotConfirmed(temp.getEmail());
+        User user = User.builder().firstName(temp.getFirstName())
+                .lastName(temp.getLastName()).email(temp.getEmail())
+                .password(passwordEncoder.encode(temp.getPassword()))
+                .build();
         user.setAccountNonLocked(1);
-        user.setSlug(new SlugGenerator().slug(userDto.getEmail()));
+        user.setSlug(new SlugGenerator().slug(user.getEmail()));
         return user;
-    }
-
-    private void validateEmail(String email) throws EmailExistsException {
-        if (userNameExistsValidator.validate(email))
-            throw new EmailExistsException(messageServices.getMessage("err.email.exists"));
-    }
-
-    private String buildConfirmEmailBody(String name, String link) {
-        return "<p> Hi, " + name + ", </p>" +
-                "<p>Thank you for registering with us," + "" +
-                "Please, follow the link below to complete your registration.</p>" +
-                "<a href=\"" + link + "\">Verify your email to activate your account</a>" +
-                "<p> Thank you <br> Users Registration Portal Service";
     }
 
     // User private Helper orchestrated methods
@@ -121,16 +94,22 @@ public class UserManager implements UserService, UserDetailsService {
         );
     }
 
+    private String createAndSaveToken(String email) {
+        ConfirmationToken confirmationToken = confirmationTokenServices
+                .newConfirmationToken(email);
+        confirmationTokenServices.saveConfirmationToken(confirmationToken);
+        return confirmationToken.getToken();
+    }
+
     @Override
     public void resetPasswordSender(String email) {
-        User user = userDao.findByEmail(email);
         // Create and save confirmation token
-        String token = createAndSaveToken(user);
+        String token = createAndSaveToken(email);
         String link = "http://localhost:8080/atm/user/reset?token=" + token;
         String message = "<p>Please, follow the link to reset your password." + "" +
                 "</p>" +
                 "<a href=\"" + link + "\">Reset Password</a>";
-        emailSenderServices.send(user.getEmail(), message);
+        emailSenderServices.send(email, message);
     }
 
     @Override

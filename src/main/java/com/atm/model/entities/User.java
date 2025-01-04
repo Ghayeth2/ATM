@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -36,7 +37,6 @@ public class User extends IntermidateBaseEntity {
      */
     @JsonIgnore
     private String password;
-    private boolean enabled;
     @Column(name = "account_non_locked" )
     private int accountNonLocked;
     @Column(name = "failed_attempts")
@@ -47,7 +47,7 @@ public class User extends IntermidateBaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Account> accounts;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(
             name = "user_id", referencedColumnName = "id"
     ), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
