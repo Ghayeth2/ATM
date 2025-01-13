@@ -44,10 +44,10 @@ public class User extends IntermidateBaseEntity {
     @Column(name = "lock_time")
     private Date lockTime;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Account> accounts;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(
             name = "user_id", referencedColumnName = "id"
     ), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))

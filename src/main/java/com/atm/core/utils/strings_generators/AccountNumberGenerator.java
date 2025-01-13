@@ -1,6 +1,8 @@
 package com.atm.core.utils.strings_generators;
 
 import com.atm.business.abstracts.ConfigService;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,14 +13,14 @@ import java.util.Properties;
 import java.util.Random;
 @Log4j2
 @Component
+@RequiredArgsConstructor
 public class AccountNumberGenerator {
-    @Autowired
-    private ConfigService configService;
-    StringBuilder sb = new StringBuilder();
-    Random rand = new Random();
 
+    private final ConfigService configService;
 
     public String accountNumber() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        Random rand = new Random();
         Properties prop = configService.getProperties();
         log.info("Key - Value pairs: "+prop);
         String leadNumber = prop.getProperty("account.lead.number");

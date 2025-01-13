@@ -13,7 +13,10 @@ import com.atm.model.enums.AccountTypes;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.User;
 import com.atm.model.enums.Currencies;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -24,19 +27,23 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Service @AllArgsConstructor @Log4j2
+@Service @RequiredArgsConstructor
+@Log4j2
 public class AccountManager implements AccountServices {
 
     private final AccountCriteria accountCriteria;
-    private AccountDao accountDao;
+    private final AccountDao accountDao;
     // Getting latest updated value of page size from property file
     // Not using @Value of spring since it only loads data at the time of running the app no more
-    private ConfigService configService;
+    private final ConfigService configService;
+    private final AccountNumberGenerator accountNumberGenerator;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Override
     public void save(String  accountType, String currency, User user) throws IOException {
         Currencies cur = Currencies.valueOf(currency);
-        String number = new AccountNumberGenerator().accountNumber();
+        String number = accountNumberGenerator.accountNumber();
         log.info("Number of account: " + number+ " length: " + number.length());
         AccountTypes type = AccountTypes.valueOf(accountType);
         Account account = Account.builder()
@@ -55,10 +62,10 @@ public class AccountManager implements AccountServices {
     @Override
     public String delete(String slug) {
         Optional<Account> account = accountDao.findBySlug(slug);
-//        account.setId(1L);
 
-        log.info("account: " + account.get().getId());
-        accountDao.deleteById(account.get().getId());
+        log.info("account id to be deleted: " + account.get().getId());
+        Account accountToDelete = entityManager.merge(account.get());
+        accountDao.delete(accountToDelete);
         return "Account deleted";
     }
 

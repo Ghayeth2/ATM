@@ -47,7 +47,7 @@ public class SecurityConfig  {
 
                 Best practice is to leave it enabled
                  */
-
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeRequests()
                 .requestMatchers(
                         // The problem was from the security chain. I missed mentioning POST URL
