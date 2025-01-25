@@ -4,7 +4,7 @@ import com.atm.business.abstracts.AccountServices;
 import com.atm.business.abstracts.ConfigService;
 import com.atm.core.utils.converter.DateFormatConverter;
 import com.atm.core.utils.strings_generators.AccountNumberGenerator;
-import com.atm.core.utils.strings_generators.SlugGenerator;
+import com.atm.core.utils.strings_generators.StringGenerator;
 import com.atm.criterias.AccountCriteria;
 import com.atm.dao.daos.AccountDao;
 import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
@@ -15,7 +15,6 @@ import com.atm.model.entities.User;
 import com.atm.model.enums.Currencies;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
@@ -53,7 +52,7 @@ public class AccountManager implements AccountServices {
                 .number(number)
                 .user(user)
         .build();
-        account.setSlug(new SlugGenerator().slug(account.getNumber()));
+        account.setSlug(new StringGenerator().slug(account.getNumber()));
         accountDao.save(account);
     }
 
@@ -69,10 +68,55 @@ public class AccountManager implements AccountServices {
         return "Account deleted";
     }
 
+    @Override
+    public Account findByNumber(String number) {
+        return accountDao.findByNumber(number).orElse(null);
+    }
+
+
     // in case of other service class requires the model of this class
     @Override
     public Account findBySlug(String slug) {
         return accountDao.findBySlug(slug).orElseThrow();
+    }
+
+    /**
+     * Actual interaction with account record, will add
+     * funds to target account.
+     * @param number
+     * @param amount
+     * @return
+     */
+    @Override
+    public double deposit(String number, Double amount) {
+        // Retrieving account
+        Account account = findByNumber(number);
+        // Adding funds
+        double currentBalance = account.getBalance()
+                + amount;
+        account.setBalance(currentBalance);
+        // Saving new account's data after changes
+        accountDao.save(account);
+        return currentBalance;
+    }
+
+    /**
+     * Actual interaction with account record, to withdraw
+     * funds.
+     * @param number
+     * @param amount
+     */
+    @Override
+    public double withdraw(String number, Double amount) {
+        // Retrieving account
+        Account account = findByNumber(number);
+        // Withdrawing funds
+        double currentBalance = account.getBalance()
+                - amount;
+        account.setBalance(currentBalance);
+        // Saving changes
+        accountDao.save(account);
+        return currentBalance;
     }
 
     @Override

@@ -2,25 +2,19 @@ package com.atm.business.concretes;
 
 import com.atm.business.abstracts.*;
 import com.atm.core.bean.PasswordEncoderBean;
-import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
-import com.atm.core.utils.strings_generators.SlugGenerator;
+import com.atm.core.utils.strings_generators.StringGenerator;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.TempUser;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
-import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
-import com.atm.core.utils.validators.UserNameExistsValidator;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -45,10 +39,8 @@ public class UserManager implements UserService, UserDetailsService {
     private BCryptPasswordEncoder passwordEncoder;
     private EmailSenderServices emailSenderServices;
 
-
     @SneakyThrows
     @Override
-
     public void save(String token) {
         // Extracting user details from Temp Memory
         User user = getUser(token);
@@ -81,7 +73,7 @@ public class UserManager implements UserService, UserDetailsService {
                 .password(passwordEncoder.encode(temp.getPassword()))
                 .build();
         user.setAccountNonLocked(1);
-        user.setSlug(new SlugGenerator().slug(user.getEmail()));
+        user.setSlug(new StringGenerator().slug(user.getEmail()));
         return user;
     }
 

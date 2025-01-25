@@ -36,17 +36,21 @@ class ConfirmationTokenDaoImplTest {
     }
 
     @Test
-    void sfd(){
+    void confirmationTokenDao_SaveMethodWithRedisServer (){
         ConfirmationToken token = ConfirmationToken
                 .builder().email("test@gmail.com")
                 .token("tken").build();
         confirmationTokenDao.save(token);
+        // Logs of running test container
+        redisContainer.followOutput(frame -> System.out.println(frame.getUtf8String()));
     }
 
     @Test
-    void sfdf() {
+    void confirmationTokenDao_FindingSavedTokenInRedisServerMethod () {
         ConfirmationToken token = confirmationTokenDao
                 .findByToken("tken");
+        // Logs of running test container
+        redisContainer.followOutput(frame -> System.out.println(frame.getUtf8String()));
         Assertions.assertEquals("test@gmail.com", token.getEmail());
     }
 }

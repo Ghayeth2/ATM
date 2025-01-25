@@ -4,20 +4,15 @@ import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.abstracts.EmailSenderServices;
 import com.atm.business.abstracts.TempUserServices;
 import com.atm.core.exceptions.EmailExistsException;
-import com.atm.core.utils.strings_generators.SlugGenerator;
 import com.atm.core.utils.validators.UserNameExistsValidator;
-import com.atm.dao.daos.ConfirmationTokenDao;
 import com.atm.dao.daos.TempUserDao;
 import com.atm.model.dtos.TempUser;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
-import com.atm.model.entities.User;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service

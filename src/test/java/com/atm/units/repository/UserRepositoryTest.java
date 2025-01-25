@@ -1,7 +1,7 @@
 package com.atm.units.repository;
 
 import com.atm.core.config.TestAuditingConfig;
-import com.atm.core.utils.strings_generators.SlugGenerator;
+import com.atm.core.utils.strings_generators.StringGenerator;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.entities.User;
 import jakarta.persistence.EntityManager;
@@ -17,8 +17,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -39,7 +37,7 @@ public class UserRepositoryTest {
                 .accountNonLocked(1).failedAttempts(0)
                 .email("user@user.com")
                 .build();
-        user.setSlug(new SlugGenerator().slug("user@user.com"));
+        user.setSlug(new StringGenerator().slug("user@user.com"));
         // Act
         User savedUser = userDao.save(user);
         // Assert
@@ -54,7 +52,7 @@ public class UserRepositoryTest {
                 .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
-        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        user.setSlug(new StringGenerator().slug("test@atm.com"));
         userDao.save(user);
         User foundUser = userDao.findByEmail("test@atm.com");
         Assertions.assertNotNull(foundUser);
@@ -68,7 +66,7 @@ public class UserRepositoryTest {
                 .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
-        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        user.setSlug(new StringGenerator().slug("test@atm.com"));
         // Act
         userDao.save(user);
         userDao.delete(user);
@@ -85,13 +83,13 @@ public class UserRepositoryTest {
                 .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
-        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        user.setSlug(new StringGenerator().slug("test@atm.com"));
         User user1 = User.builder()
                 .email("atm@atm.com").firstName("first").lastName("last")
                 .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
-        user1.setSlug(new SlugGenerator().slug("atm@atm.com"));
+        user1.setSlug(new StringGenerator().slug("atm@atm.com"));
         Iterable<User> users = Arrays.asList(user, user1);
         // Act
         userDao.saveAll(users);
@@ -109,7 +107,7 @@ public class UserRepositoryTest {
                 .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
-        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        user.setSlug(new StringGenerator().slug("test@atm.com"));
         // Act
         String email = userDao.save(user).getEmail();
         boolean exists = userDao.existsByEmail(email);
@@ -125,7 +123,7 @@ public class UserRepositoryTest {
                 .accountNonLocked(1).failedAttempts(0)
                 .password("password")
                 .build();
-        user.setSlug(new SlugGenerator().slug("test@atm.com"));
+        user.setSlug(new StringGenerator().slug("test@atm.com"));
         // Act
         User savedUser = userDao.save(user);
         int isUpdated = userDao.updateFailedAttempts(1, savedUser.getEmail());

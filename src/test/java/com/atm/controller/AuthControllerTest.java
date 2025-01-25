@@ -65,7 +65,7 @@ class AuthControllerTest {
     @SneakyThrows
     void authController_SaveUser_ValidUserIsGiven() {
         String successMessage = "Success";
-        when(tempUserServices.save(any())).thenReturn(successMessage);
+        when(tempUserServices.save(any())).thenReturn("Success");
         mockMvc.perform(post(prefix)
                 .param("firstName", "first")
                 .param("lastName", "last")
@@ -75,7 +75,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/atm/registration"))
-                .andExpect(flash().attribute("success", successMessage));
+                .andExpect(flash().attribute("lop", successMessage));
     }
 
     @Test

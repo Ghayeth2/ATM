@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Random;
 @Component
-public class SlugGenerator {
+public class StringGenerator {
 
     public String slug(String input) {
         if (input.contains(".") || input.contains(" "))

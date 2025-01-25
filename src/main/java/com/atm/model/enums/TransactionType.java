@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TransactionType {
-    WITHDRAWAL("Withdrawal money"),
-    DEPOSIT("Deposit money"),
-    TRANSFER("Transfer money");
+    WITHDRAWAL("Withdrawal"),
+    DEPOSIT("Deposit"),
+    TRANSFER("Transfer");
 
     private final String transaction;
 }

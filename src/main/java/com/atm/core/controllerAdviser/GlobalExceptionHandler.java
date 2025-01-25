@@ -1,9 +1,7 @@
 package com.atm.core.controllerAdviser;
 
 import com.atm.business.concretes.MessageServices;
-import com.atm.core.exceptions.AccountInactiveException;
-import com.atm.core.exceptions.EmailExistsException;
-import com.atm.core.exceptions.PasswordMisMatchException;
+import com.atm.core.exceptions.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +45,33 @@ public class GlobalExceptionHandler {
         return "redirect:/atm/email_confirmed";
     }
 
+    /**
+     * Handler for InsufficientFundsException
+     * @param ex
+     * @param redirectAttributes
+     * @return
+     */
+    @ExceptionHandler(InsufficientFundsException.class)
+    public String handleInsufficientFundsException(InsufficientFundsException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+        return "redirect:/atm/transactions/new";
+    }
+
+    /**
+     * Handler for AccountsCurrenciesMismatchException during transfer transaction
+     * if the currencies of the two accounts differ.
+     * @param ex
+     * @param redirectAttributes
+     * @return
+     */
+    @ExceptionHandler(AccountsCurrenciesMismatchException.class)
+    public String handleAccountsCurrenciesMismatchException(AccountsCurrenciesMismatchException ex, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+        return "redirect:/atm/transactions/new";
+    }
+
+    // TODO: handle both exceptions (CurrencyMismatch, InsufficientFunds)
+
     // account
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex, RedirectAttributes redirectAttributes) {
@@ -61,17 +86,4 @@ public class GlobalExceptionHandler {
         redirectAttributes.addFlashAttribute("exception", ex.getMessage());
         return "redirect:/atm/profile";
     }
-
-    /*
-    Here's why the postman kept redirecting me to Login page.
-    in here i am handling all Exceptions that might occur, and redirecting to login page
-
-    Here is a bug that should not be added at all in case of mistake like mine.
-    Never catch Exception, only the ones u r targeting.
-     */
-//    @ExceptionHandler(Exception.class)
-//    public String handleException(Exception ex, RedirectAttributes redirectAttributes) {
-//        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
-//        return "redirect:/atm/login";
-//    }
 }

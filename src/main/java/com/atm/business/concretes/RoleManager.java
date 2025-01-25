@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 @Service
 public class RoleManager implements RoleServices {
     @Autowired
@@ -16,6 +15,7 @@ public class RoleManager implements RoleServices {
     @Override
     public Role getOrCreateRole(String roleName) {
         Optional<Role> role = roleDao.findByName(roleName);
+        System.out.println(role.isEmpty());
         return role.orElseGet(() -> roleDao.save(new Role(roleName)));
     }
 }

@@ -2,7 +2,7 @@ package com.atm.units.repository;
 
 import com.atm.core.config.TestAuditingConfig;
 import com.atm.core.utils.converter.DateFormatConverter;
-import com.atm.core.utils.strings_generators.SlugGenerator;
+import com.atm.core.utils.strings_generators.StringGenerator;
 import com.atm.criterias.AccountCriteria;
 import com.atm.dao.daos.AccountDao;
 import com.atm.dao.daos.UserDao;
@@ -10,17 +10,13 @@ import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
 import com.atm.model.dtos.payloads.responses.AccountDto;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.User;
-import lombok.AllArgsConstructor;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -51,11 +46,11 @@ Same for DateFormatConverter, it is a util class not a JPA repo.
 @Import({TestAuditingConfig.class,
         AccountCriteria.class,
         DateFormatConverter.class,
-        SlugGenerator.class})
+        StringGenerator.class})
 public class AccountCriteriaTest {
 
     @Autowired
-    private SlugGenerator slug;
+    private StringGenerator slug;
 
     @Autowired
     private AccountCriteria accountCriteria;

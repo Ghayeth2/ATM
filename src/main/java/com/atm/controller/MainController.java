@@ -5,6 +5,7 @@ import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.model.dtos.CustomUserDetailsDto;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
+import com.atm.model.dtos.payloads.requests.TransactionRequest;
 import com.atm.model.entities.User;
 import com.atm.model.enums.Currencies;
 import lombok.extern.log4j.Log4j2;
@@ -67,6 +68,13 @@ public class MainController {
     public String signup(Model model){
         model.addAttribute("user", new UserDto());
         return "layout/auth/signup";
+    }
+
+    // New Transaction template
+    @GetMapping("/transactions/new")
+    public String newTransaction(Model model){
+        model.addAttribute("transaction", new TransactionRequest());
+        return "layout/transactions/new";
     }
 
     /*

@@ -54,6 +54,11 @@ public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHan
                                         AuthenticationException exception) throws IOException, ServletException {
         String email = request.getParameter("username");
         User user = userAccountServices.findByEmail(email);
+        if (user == null) {
+            response.sendRedirect(BASE_URL+"notFound");
+            return;
+        }
+        System.out.println("auth failure ");
         Optional<TempUser> temp = tempUserServices.findByUsername(email);
         if (temp.isPresent()) {
             if (temp.get().isNotConfirmed()){
@@ -61,24 +66,18 @@ public class LoginFailureHandlerConfig extends SimpleUrlAuthenticationFailureHan
                 return;
             }
         }
-        if (user != null) {
-            if (user.getAccountNonLocked() == 1) {
-                if (user.getFailedAttempts() < UserAccountServicesManager.MAX_FAILED_ATTEMPTS - 1) {
-                    userAccountServices.increaseFailedAttempts(user);
-                } else {
-                    userAccountServices.lock(user);
-                    response.sendRedirect(BASE_URL+"locked");
-                }
+        if (user.getAccountNonLocked() == 1) {
+            if (user.getFailedAttempts() < UserAccountServicesManager.MAX_FAILED_ATTEMPTS - 1) {
+                userAccountServices.increaseFailedAttempts(user);
             } else {
-                if (userAccountServices.unlockWhenTimeExpired(user)) {
-                    // those messages should be dynamically sat
-                    response.sendRedirect(BASE_URL+"unlocked");
-                }
+                userAccountServices.lock(user);
+                response.sendRedirect(BASE_URL + "locked");
             }
         } else {
-            // No user found (sign up required)
-            response.sendRedirect(BASE_URL+"notFound");
-            return;
+            if (userAccountServices.unlockWhenTimeExpired(user)) {
+                // those messages should be dynamically sat
+                response.sendRedirect(BASE_URL + "unlocked");
+            }
         }
 
         // Default (username or password invalidation)
