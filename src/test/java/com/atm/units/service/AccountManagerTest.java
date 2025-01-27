@@ -1,13 +1,11 @@
 package com.atm.units.service;
 import com.atm.business.abstracts.ConfigService;
 import com.atm.business.concretes.AccountManager;
-import com.atm.business.concretes.ConfigManager;
 import com.atm.core.utils.strings_generators.AccountNumberGenerator;
-import com.atm.criterias.AccountCriteria;
+import com.atm.dao.criterias.AccountCriteria;
 import com.atm.dao.daos.AccountDao;
 import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
 import com.atm.model.dtos.payloads.responses.AccountDto;
-import com.atm.model.dtos.payloads.responses.AccountPageImplRes;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.User;
 import lombok.SneakyThrows;
@@ -22,10 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;

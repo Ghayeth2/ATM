@@ -1,4 +1,4 @@
-package com.atm.criterias;
+package com.atm.dao.criterias;
 
 import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
 import com.atm.model.dtos.payloads.responses.AccountDto;
@@ -67,7 +67,7 @@ public class AccountCriteria {
             predicates.add(orPredicate);
         }
 
-        // Where clause: and created_date between startDate and endDate
+        // Where clause: (between) and created_date between startDate and endDate
          predicates.add(
                 builder.between(
                         root.get("createdDate"), req.getStartDate(), req.getEndDate()

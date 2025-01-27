@@ -1,6 +1,7 @@
 package com.atm.business.abstracts;
 
 
+import com.atm.model.dtos.payloads.records.requests.TransactionsFiltersRequest;
 import com.atm.model.dtos.payloads.records.responses.TransactionDto;
 import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
 import org.springframework.data.domain.Page;
@@ -11,17 +12,23 @@ public interface TransactionsServices {
     /**
      * The service bellow is used only by Admins,
      * to access user's daily transactions.
-     * @param userId
+     * @param filters
      * @return Page<UserAccountTransaction> record
      */
-    Page<UserAccountTransaction> findAllByUser(Long userId);
+    Page<UserAccountTransaction> findAllFiltered(TransactionsFiltersRequest
+                                               filters);
 
     /**
      * It will return each account's transactions.
      * @param accountSlug
      * @return Page<Transaction> record
      */
-    Page<TransactionDto> findAllByAccount(String accountSlug);
+    Page<TransactionDto> findAllByAccount(String accountSlug,
+                                          String startDate,
+                                          String endDate,
+                                          int page,
+                                          String sortOrder,
+                                          String sortBy);
 
     /**
      * Will create new transaction using passed

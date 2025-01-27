@@ -5,7 +5,7 @@ import com.atm.business.abstracts.ConfigService;
 import com.atm.core.utils.converter.DateFormatConverter;
 import com.atm.core.utils.strings_generators.AccountNumberGenerator;
 import com.atm.core.utils.strings_generators.StringGenerator;
-import com.atm.criterias.AccountCriteria;
+import com.atm.dao.criterias.AccountCriteria;
 import com.atm.dao.daos.AccountDao;
 import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
 import com.atm.model.dtos.payloads.responses.AccountDto;
@@ -133,7 +133,7 @@ public class AccountManager implements AccountServices {
         // Fetching page size from dynamic-configs.properties file
 
         int pageSize = Integer.parseInt(configService.
-                getProperties().getProperty("page.size"));
+                getProperties().getProperty("accounts.page.size"));
 
         // If Dates are not sat by user, use default dates (within a month ago)
         LocalDateTime startDate;

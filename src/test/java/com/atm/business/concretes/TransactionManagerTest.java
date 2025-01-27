@@ -3,11 +3,17 @@ package com.atm.business.concretes;
 import com.atm.business.abstracts.AccountServices;
 import com.atm.business.abstracts.ConfigService;
 import com.atm.core.exceptions.AccountsCurrenciesMismatchException;
+import com.atm.dao.criterias.TransactionsCriteria;
 import com.atm.dao.daos.TransactionDao;
+import com.atm.model.dtos.payloads.records.requests.TransactionsCriteriaRequest;
+import com.atm.model.dtos.payloads.records.requests.TransactionsFiltersRequest;
+import com.atm.model.dtos.payloads.records.responses.TransactionDto;
+import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.Transaction;
 import com.atm.model.entities.User;
 import com.atm.business.strategies.concretes.WithdrawalStrategy;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +21,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Properties;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +39,9 @@ class TransactionManagerTest {
 
     @Mock
     private WithdrawalStrategy strategy;
+
+    @Mock
+    private TransactionsCriteria criteria;
 
     @Mock
     private TemplateEngine templateEngine;
@@ -43,6 +60,79 @@ class TransactionManagerTest {
 
     @InjectMocks
     private TransactionManager transactionManager;
+
+    /**
+     * Unit testing Service Layer's findAllFiltered method
+     */
+    @Test @SneakyThrows
+    void transactionManager_FindAllFiltered() {
+        // Mock list
+        List<UserAccountTransaction> list = List.of(
+                UserAccountTransaction.builder()
+                .date(LocalDateTime.now())
+                .email("email").accountType("accountType")
+                .fullName("ghayeth al masri").build());
+        Page<UserAccountTransaction> page = new PageImpl<>(list);
+        // Mock services
+        Mockito.when(configService.getProperties())
+                .thenReturn(properties);
+        Mockito.when(properties.getProperty(Mockito.anyString()))
+                .thenReturn("5");
+        Mockito.when(criteria.findAll(Mockito.any(
+                TransactionsCriteriaRequest.class
+        ))).thenReturn(page);
+        // Calling service & Asserting expected result
+        Page<UserAccountTransaction> response =
+                transactionManager.findAllFiltered(
+                        new TransactionsFiltersRequest(
+                                "","",
+                                "", ""
+                                ,"", 0.0
+                                ,0.0, 1
+                        )
+                );
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals(1, response.getTotalElements());
+    }
+
+    /**
+     * Testing findAllByAccount service.
+     */
+    @Test @SneakyThrows
+    void transactionManager_FindAllByAccount() {
+        // Mock data
+        Account account = Account.builder().number("1000-3245-4314-1001")
+                .type("Business").currency("$")
+                .balance(800.0).build();
+        account.setId(1L);
+        Page<TransactionDto> data = new PageImpl<> (List.of(
+                TransactionDto.builder().createdDate(
+                        LocalDateTime.now()
+                ).amount(500).type("Transfer").build()
+        ));
+        Pageable pageable = PageRequest.of(1, 5);
+        // Mocking services
+        Mockito.when(accountServices.findBySlug(Mockito.anyString()))
+                .thenReturn(account);
+        Mockito.when(configService.getProperties())
+                .thenReturn(properties);
+        Mockito.when(properties.getProperty(Mockito.anyString()))
+                .thenReturn("5");
+        Mockito.when(transactionDao.findAllByAccount(
+                Mockito.anyLong(), Mockito.any(LocalDateTime.class),
+                Mockito.any(LocalDateTime.class),
+                Mockito.any(Pageable.class)
+        )).thenReturn(data);
+        // Calling the service and asserting result
+        Page<TransactionDto> response =
+                transactionManager.findAllByAccount(
+                        "slug","",""
+                        ,1, "",""
+                );
+        Assertions.assertNotNull(response);
+        Assertions.assertEquals("Transfer",
+                response.getContent().get(0).getType());
+    }
 
     /**
      * Withdrawal transaction tested (calling, creating receipt)
@@ -67,7 +157,7 @@ class TransactionManagerTest {
                 .thenReturn(account);
         Mockito.when(configService.getProperties())
                 .thenReturn(properties);
-        Mockito.when(properties.getProperty("receipts.path"))
+        Mockito.when(properties.getProperty("transactions.receipts.path"))
                 .thenReturn("D:\\\\files\\\\receipts");
         Mockito.when(transactionDao.save(Mockito.any()))
                 .thenReturn(transaction);
@@ -151,9 +241,9 @@ class TransactionManagerTest {
         )).thenReturn(account1);
         Mockito.when(configService.getProperties())
                 .thenReturn(properties);
-        Mockito.when(properties.getProperty("fees.savings"))
+        Mockito.when(properties.getProperty("transactions.fees.savings"))
                 .thenReturn("0.01");
-        Mockito.when(properties.getProperty("receipts.path"))
+        Mockito.when(properties.getProperty("transactions.receipts.path"))
                 .thenReturn("D:\\\\files\\\\receipts");
         Mockito.when(transactionDao.save(Mockito.any(Transaction.class)))
                 .thenReturn(transaction);

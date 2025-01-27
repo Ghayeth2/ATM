@@ -88,7 +88,7 @@ class TransactionDaoTest {
         Assertions.assertThat(response.getTotalElements())
                 .isEqualTo(1);
         Assertions.assertThat(response.getContent()
-                        .get(0).balanceAfter())
+                        .get(0).getBalanceAfter())
                 .isEqualTo(100);
     }
 

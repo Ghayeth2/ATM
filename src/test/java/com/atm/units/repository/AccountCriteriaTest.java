@@ -3,7 +3,7 @@ package com.atm.units.repository;
 import com.atm.core.config.TestAuditingConfig;
 import com.atm.core.utils.converter.DateFormatConverter;
 import com.atm.core.utils.strings_generators.StringGenerator;
-import com.atm.criterias.AccountCriteria;
+import com.atm.dao.criterias.AccountCriteria;
 import com.atm.dao.daos.AccountDao;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.dtos.payloads.requests.AccountCriteriaRequest;
@@ -87,39 +87,55 @@ public class AccountCriteriaTest {
         userDao.saveAll(Arrays.asList(user, usr));
         // Setting up two account lists
         accounts.addAll(Stream.of(
-                new Account("1000-2020-2323-1001",
-                        0.0, "!", "Personal Account", user),
-                new Account("1000-3242-2034-1002",
-                        0.0, "#", "Business Account", user),
-                new Account("1000-4788-9099-1003",
-                        0.0, "&", "Savings Account", user),
-                new Account("1000-5033-9099-1004",
-                        0.0, "#", "Personal Account", user),
-                new Account("1000-8022-1331-1005",
-                        0.0, "&", "Business Account", user),
-                new Account("1000-7221-7044-1006",
-                        0.0, "&", "Personal Account", user),
-                new Account("1000-4114-6226-1007",
-                        0.0, "&", "Business Account", user)
+                Account.builder().number("1000-2020-2323-1001")
+                        .type("Personal Account").currency("!")
+                        .user(user).build(),
+                Account.builder().number("1000-3242-2034-1002")
+                        .type("Business Account").currency("#")
+                        .user(user).build(),
+                Account.builder().number("1000-4788-9099-1003")
+                        .type("Savings Account").currency("&")
+                        .user(user).build(),
+                Account.builder().number("1000-5033-9099-1004")
+                        .type("Personal Account").currency("#")
+                        .user(user).build(),
+                Account.builder().number("1000-8022-1331-1005")
+                        .type("Business Account").currency("&")
+                        .user(user).build(),
+                Account.builder().number("1000-7221-7044-1006")
+                        .type("Personal Account").currency("&")
+                        .user(user).build(),
+                Account.builder().number("1000-4114-6226-1007")
+                        .type("Business Account").currency("&")
+                        .user(user).build()
         ).toList());
         // Setting the slug (identifier) of each account
-        accounts.forEach(account -> {account.setSlug(account.getNumber());});
+        accounts.forEach(ac -> System.out.println(ac.getNumber()));
+        accounts.forEach(account -> {account.setSlug(
+                slug.slug(account.getNumber()));
+            System.out.println(account.getNumber()
+            +" "+account.getSlug());});
         accountDao.saveAll(accounts);
         // Clearing accounts to add new list
         accounts.clear();
         // New list
         accounts.addAll(Stream.of(
-                new Account("1000-2121-3131-1008",
-                        0.0, "!", "Personal Account", usr),
-                new Account("1000-8435-2023-1009",
-                        0.0, "#", "Business Account", usr),
-                new Account("1000-8351-9909-1010",
-                        0.0, "&", "Savings Account", usr)
+                Account.builder().number("1000-2121-3131-1008")
+                        .type("Personal Account").currency("!")
+                        .user(usr).build(),
+                Account.builder().number("1000-8435-2023-1009")
+                        .type("Business Account").currency("#")
+                        .user(usr).build(),
+                Account.builder().number("1000-8351-9909-1010")
+                        .type("Savings Account").currency("&")
+                        .user(usr).build()
         ).toList());
         // Setting the slug value for each account
-        accounts.forEach(account -> {
-            account.setSlug(account.getNumber());
-        });
+        accounts.forEach(ac -> System.out.println(ac.getNumber()));
+        accounts.forEach(account -> {account.setSlug(
+                slug.slug(account.getNumber()));
+            System.out.println(account.getNumber()
+                    +" "+account.getSlug());});
         // Saving the 2nd list
         accountDao.saveAll(accounts);
         // Clearing the list

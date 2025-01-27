@@ -19,7 +19,8 @@ public class Account extends IntermidateBaseEntity{
     private String type;
     @ManyToOne
     private User user;
-    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "account", cascade = {CascadeType.REMOVE,
+    CascadeType.PERSIST})
     private List<Transaction> transactions;
 
     public Account(String s, double v, String s1, String personalAccount, User user) {

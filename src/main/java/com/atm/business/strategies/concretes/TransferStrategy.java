@@ -35,11 +35,11 @@ public class TransferStrategy implements TransactionsStrategy {
                 + context.getAmount() + " " + context.getSender());
         // Retrieving fees values from config file
         double businessFees = Double.parseDouble(configService.getProperties()
-                .getProperty("fees.business"));
+                .getProperty("transactions.fees.business"));
         double savingsFees = Double.parseDouble(configService.getProperties()
-                .getProperty("fees.savings"));
+                .getProperty("transactions.fees.savings"));
         double personalFees = Double.parseDouble(configService.getProperties()
-                .getProperty("fees.personal"));
+                .getProperty("transactions.fees.personal"));
         System.out.println("Business Fees: " + businessFees);
         // Retrieving accounts (sender & receiver) for transfer
         Account receiver = accountServices.findByNumber(context.getReceiver());
