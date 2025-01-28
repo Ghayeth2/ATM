@@ -7,13 +7,6 @@ services:
       - "6379:6379"
     restart: always
 
-  maildev:
-    image: maildev/maildev
-    ports:
-      - "1025:1025"
-      - "1080:1080"
-    restart: always
-
   db:
     image: mysql
     ports:

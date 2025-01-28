@@ -5,15 +5,12 @@ import com.atm.business.abstracts.TempUserServices;
 import com.atm.business.abstracts.UserAccountServices;
 import com.atm.business.abstracts.UserService;
 import com.atm.business.concretes.MessageServices;
-import com.atm.model.dtos.payloads.requests.ResetPasswordReq;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.mockito.BDDMockito.given;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,8 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
     import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.doNothing;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(controllers = AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -109,7 +103,7 @@ class AuthControllerTest {
     @Test
     @SneakyThrows
     void authController_ResetPassword_SendingEmail() {
-        doNothing().when(userService).resetPasswordSender(anyString());
+        doNothing().when(userService).handleResetPasswortMailSending(anyString());
         mockMvc.perform(post(prefix+"/password/reset")
                 .param("email", "test@gmail.com"))
                 .andExpect(flash().attributeExists("sent"))

@@ -1,11 +1,14 @@
 package com.atm.business.concretes;
 
 import com.atm.business.abstracts.ConfirmationTokenServices;
-import com.atm.business.abstracts.EmailSenderServices;
+import com.atm.business.abstracts.EmailServices;
 import com.atm.business.abstracts.TempUserServices;
 import com.atm.core.exceptions.EmailExistsException;
+import com.atm.core.utils.strings_generators.EmailContentBuilder;
 import com.atm.core.utils.validators.UserNameExistsValidator;
 import com.atm.dao.daos.TempUserDao;
+import com.atm.model.dtos.EmailDetails;
+import com.atm.model.dtos.EmailInfo;
 import com.atm.model.dtos.TempUser;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
@@ -21,7 +24,7 @@ public class TempUserManager implements TempUserServices {
     private final TempUserDao tempUserDao;
     private final ConfirmationTokenServices confirmationTokenServices;
     private final MessageServices messageServices;
-    private final EmailSenderServices emailSenderServices;
+    private final EmailServices emailServices;
     private final UserNameExistsValidator userNameExistsValidator;
 
     @SneakyThrows
@@ -36,19 +39,35 @@ public class TempUserManager implements TempUserServices {
         // Create and Save confirmation token
         String token = createAndSaveToken(user.getEmail());
         // Send confirmation email
-        sendEmail(token, user);
+        handleVerificationMailSending(token, user);
 
         return messageServices.getMessage("scs.user.signup");
     }
 
     // User private Helper orchestrated methods
-
-    private void sendEmail(String token, TempUser user) {
+    // should be name relates to this class
+    private void handleVerificationMailSending(String token, TempUser user) {
+        // When moving to Production environment, the link's host will be atmsemu.net/
         String link = "http://localhost:8080/atm/user/verify?token=" + token;
-        emailSenderServices.send(user.getEmail(),
-                buildConfirmEmailBody(user.getFirstName()
-                                + " " + user.getLastName(),
-                        link));
+        // Subject of the email
+        String subject = "Verify your email address";
+        String content = new EmailContentBuilder().buildBody(
+                user.getFirstName(),
+                subject, link
+        );
+        System.out.println("Content of email: " + content);
+        // Building EmailDetails & EmailInfo
+        EmailInfo fromAddress = EmailInfo.builder()
+                .emailAddress("ghayeth.msri@gmail.com").name("ATM simulator").build();
+        EmailInfo toAddress = EmailInfo.builder()
+                .emailAddress(user.getEmail()).name(user.getFirstName()
+                        + " " + user.getLastName()).build();
+        EmailDetails emailDetails = EmailDetails.builder()
+                .fromAddress(fromAddress).toAddress(toAddress)
+                .subject(subject)
+                .body(content).build();
+        // Sending email request
+        emailServices.sendEmail(emailDetails);
     }
 
     private String createAndSaveToken(String email) {

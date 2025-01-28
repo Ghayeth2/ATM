@@ -2,9 +2,7 @@ package com.atm.controller;
 
 import com.atm.business.abstracts.ConfirmationTokenServices;
 import com.atm.business.abstracts.TempUserServices;
-import com.atm.business.abstracts.UserAccountServices;
 import com.atm.business.abstracts.UserService;
-import com.atm.business.concretes.MessageServices;
 import com.atm.core.exceptions.AccountInactiveException;
 import com.atm.core.exceptions.EmailExistsException;
 import com.atm.model.dtos.payloads.requests.ResetPasswordReq;
@@ -55,7 +53,7 @@ public class AuthController {
     @PostMapping("/password/reset")
     public String resetPassword(@RequestParam("email")
                                     String email, RedirectAttributes ra) {
-        userService.resetPasswordSender(email);
+        userService.handleResetPasswortMailSending(email);
         ra.addFlashAttribute("sent",
                 "Check your email for reset password");
         return "redirect:/atm/password/forgot";

@@ -4,12 +4,10 @@ import com.atm.business.abstracts.*;
 import com.atm.core.bean.PasswordEncoderBean;
 import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
+import com.atm.core.utils.strings_generators.EmailContentBuilder;
 import com.atm.core.utils.strings_generators.StringGenerator;
 import com.atm.dao.daos.UserDao;
-import com.atm.model.dtos.CustomUserDetailsDto;
-import com.atm.model.dtos.TempUser;
-import com.atm.model.dtos.UserDetailsDto;
-import com.atm.model.dtos.UserDto;
+import com.atm.model.dtos.*;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.User;
 import lombok.AllArgsConstructor;
@@ -37,7 +35,7 @@ public class UserManager implements UserService, UserDetailsService {
     private RoleServices roleServices;
     private TempUserServices tempUserServices;
     private BCryptPasswordEncoder passwordEncoder;
-    private EmailSenderServices emailSenderServices;
+    private EmailServices emailServices;
 
     @SneakyThrows
     @Override
@@ -93,15 +91,36 @@ public class UserManager implements UserService, UserDetailsService {
         return confirmationToken.getToken();
     }
 
+    // Change the name of the method to relate to this
     @Override
-    public void resetPasswordSender(String email) {
+    public void handleResetPasswortMailSending(String email) {
         // Create and save confirmation token
         String token = createAndSaveToken(email);
+        // Retrieve user model
+        User user = userDao.findByEmail(email);
+        String subject = "Reset your password";
+        // TODO: change the host to atmsemu.net for production
         String link = "http://localhost:8080/atm/user/reset?token=" + token;
-        String message = "<p>Please, follow the link to reset your password." + "" +
-                "</p>" +
-                "<a href=\"" + link + "\">Reset Password</a>";
-        emailSenderServices.send(email, message);
+        String content = new EmailContentBuilder()
+                .buildBody(
+                        user.getFirstName(),
+                        subject, link
+                );
+        System.out.println("content of email: "+content);
+        // Processing EmailDetails & EmailInfo
+        EmailInfo fromAddress = EmailInfo.builder()
+                        .emailAddress("ghayeth.msri@gmail.com").name("ATM simulator")
+                        .build();
+        EmailInfo toAddress = EmailInfo.builder()
+                        .emailAddress(email).name(user.getFirstName()+
+                        " "+user.getLastName()).build();
+        EmailDetails emailDetails = EmailDetails.builder()
+                .toAddress(toAddress).fromAddress(fromAddress)
+                .subject(subject).body(
+                        content
+                ).build();
+        // Sending email request
+        emailServices.sendEmail(emailDetails);
     }
 
     @Override

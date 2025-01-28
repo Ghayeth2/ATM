@@ -1,7 +1,5 @@
 package com.atm.business.abstracts;
 
-import com.atm.core.exceptions.AccountInactiveException;
-import com.atm.core.exceptions.EmailExistsException;
 import com.atm.model.dtos.UserDetailsDto;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.User;
@@ -19,7 +17,7 @@ public interface UserService {
     List<UserDto> findAll();
     UserDto findByEmail(String email);
     // User cannot delete himself, Admin can
-    void resetPasswordSender(String email);
+    void handleResetPasswortMailSending(String email);
     String resetPassword(String password, String slug);
     User findUserByToken(String token);
 

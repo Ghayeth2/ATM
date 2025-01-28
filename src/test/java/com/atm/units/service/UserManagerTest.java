@@ -2,10 +2,7 @@ package com.atm.units.service;
 
 import com.atm.business.abstracts.*;
 import com.atm.business.concretes.MessageServices;
-import com.atm.business.concretes.TempUserManager;
 import com.atm.business.concretes.UserManager;
-import com.atm.core.bean.PasswordEncoderBean;
-import com.atm.core.exceptions.EmailExistsException;
 import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.core.utils.validators.UserNameExistsValidator;
@@ -30,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -142,7 +138,7 @@ public class UserManagerTest {
                 .thenReturn(token);
         doNothing().when(cServices).saveConfirmationToken(any(ConfirmationToken.class));
         doNothing().when(emailServices).send(user.getEmail(), message);
-        userManager.resetPasswordSender(email);
+        userManager.handleResetPasswortMailSending(email);
         // Assert
         // Using the Mockito Framework's verify() method
         // That assures the target method was triggerred
