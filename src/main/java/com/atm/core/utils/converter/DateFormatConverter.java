@@ -40,9 +40,15 @@ public class DateFormatConverter {
     public LocalDateTime formatRequestDate(String date) {
         LocalDateTime res = null;
         try {
-            res =  LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            // Check if the input date string doesn't include time, and append default time
+            if (date != null && date.length() == 10) { // Format 'yyyy-MM-dd'
+                date = date + " 00:00:00"; // Append default time
+            }
+
+            // Parse the date and time string
+            res = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         } catch (Exception e) {
-            log.error("Date exception: "+e.getMessage());
+            log.error("Date exception: " + e.getMessage());
         }
         return res;
     }

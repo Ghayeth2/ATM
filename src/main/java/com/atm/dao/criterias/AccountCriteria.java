@@ -56,29 +56,8 @@ public class AccountCriteria {
                 root.get("balance"), root.get("type"), root.get("createdDate")
         ));
 
-        // Where clause: (type like %search% or number like %search% or currency like %search%)
-        if (!req.getSearchQuery().isEmpty() && !req.getSearchQuery().isBlank()) {
-            log.info("Search query: {}", req.getSearchQuery());
-            Predicate orPredicate = builder.or(
-                    builder.like(root.get("number"), "%"+ req.getSearchQuery() + "%"),
-                    builder.like(builder.lower(root.get("type")), "%"+ req.getSearchQuery().toLowerCase() +"%"),
-                    builder.like(root.get("currency"), "%" + req.getSearchQuery() + "%")
-            );
-            predicates.add(orPredicate);
-        }
 
-        // Where clause: (between) and created_date between startDate and endDate
-         predicates.add(
-                builder.between(
-                        root.get("createdDate"), req.getStartDate(), req.getEndDate()
-                )
-        );
-
-        // Where clause: and user_id = userId
-        predicates.add(
-                builder.equal(root.get("user").get("id"), req.getUserId())
-        );
-
+        predicates = getFilters(root, req);
         // building query with combining predicates
         query.where(predicates.toArray(new Predicate[0]));
 
@@ -109,8 +88,12 @@ public class AccountCriteria {
         Root<Account> countRoot = countQuery.from(Account.class);
         // select count from account
         countQuery.select(builder.count(countRoot));
+        // clearing filters
+        predicates.clear();
+        // getting filters
+        predicates = getFilters(countRoot, req);
         // where user_id = userId
-        countQuery.where(builder.equal(countRoot.get("user").get("id"), req.getUserId()));
+        countQuery.where(predicates.toArray(new Predicate[0]));
         /*
         No need to use TypedQuery<> cuz i am expecting only one result,
         and no need for Type casting safety.
@@ -118,5 +101,34 @@ public class AccountCriteria {
         Long totalElements = entityManager.createQuery(countQuery).getSingleResult();
         int totalPages = (int) ((totalElements + pageable.getPageSize() - 1) / pageable.getPageSize());
         return new AccountPageImplRes<>(totalPages, totalElements, accounts, pageable);
+    }
+
+    private List<Predicate> getFilters(Root<?> root,
+                                       AccountCriteriaRequest req) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        List<Predicate> predicates = new ArrayList<>();
+        // Where clause: (type like %search% or number like %search% or currency like %search%)
+        if (!req.getSearchQuery().isEmpty() && !req.getSearchQuery().isBlank()) {
+            log.info("Search query: {}", req.getSearchQuery());
+            Predicate orPredicate = builder.or(
+                    builder.like(root.get("number"), "%"+ req.getSearchQuery() + "%"),
+                    builder.like(builder.lower(root.get("type")), "%"+ req.getSearchQuery().toLowerCase() +"%"),
+                    builder.like(root.get("currency"), "%" + req.getSearchQuery() + "%")
+            );
+            predicates.add(orPredicate);
+        }
+
+        // Where clause: (between) and created_date between startDate and endDate
+        predicates.add(
+                builder.between(
+                        root.get("createdDate"), req.getStartDate(), req.getEndDate()
+                )
+        );
+
+        // Where clause: and user_id = userId
+        predicates.add(
+                builder.equal(root.get("user").get("id"), req.getUserId())
+        );
+        return predicates;
     }
 }

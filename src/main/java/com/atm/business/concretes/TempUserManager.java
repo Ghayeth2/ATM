@@ -14,18 +14,41 @@ import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class TempUserManager implements TempUserServices {
     private final TempUserDao tempUserDao;
     private final ConfirmationTokenServices confirmationTokenServices;
     private final MessageServices messageServices;
     private final EmailServices emailServices;
     private final UserNameExistsValidator userNameExistsValidator;
+
+    @Autowired
+    public TempUserManager(TempUserDao tempUserDao,
+                           ConfirmationTokenServices confirmationTokenServices,
+                           MessageServices messageServices,
+                           EmailServices emailServices,
+                           UserNameExistsValidator userNameExistsValidator) {
+        this.tempUserDao = tempUserDao;
+        this.confirmationTokenServices = confirmationTokenServices;
+        this.messageServices = messageServices;
+        this.emailServices = emailServices;
+        this.userNameExistsValidator = userNameExistsValidator;
+    }
+
+    @Value("${server.port}")
+    private int port;
+
+    @Value("${server.local.host}")
+    private String localHost;
+
+    @Value("${server.remote.host}")
+    private String remoteHost;
 
     @SneakyThrows
     @Override
@@ -48,7 +71,7 @@ public class TempUserManager implements TempUserServices {
     // should be name relates to this class
     private void handleVerificationMailSending(String token, TempUser user) {
         // When moving to Production environment, the link's host will be atmsemu.net/
-        String link = "http://localhost:8080/atm/user/verify?token=" + token;
+        String link = "http://"+localHost+":"+port+"/atm/user/verify?token=" + token;
         // Subject of the email
         String subject = "Verify your email address";
         String content = new EmailContentBuilder().buildBody(

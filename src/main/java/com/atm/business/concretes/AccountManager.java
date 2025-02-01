@@ -154,8 +154,6 @@ public class AccountManager implements AccountServices {
             sortBy = "createdDate";
             order = "desc";
         }
-//        log.info("sortBy: " + sortBy + " order: " + order);
-        // Setting the page requirements (offset & size) and setting the sort value.
 
         AccountCriteriaRequest request = AccountCriteriaRequest.builder()
                 .startDate(startDate)
@@ -169,14 +167,6 @@ public class AccountManager implements AccountServices {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
 
         return accountCriteria.findAllPaginatedAndFiltered(pageable, request);
-//        return accountDao.findAll(pageable).map(account ->
-//                AccountDto.builder()
-//                        .createdDate(formatter.formatDate(account.getCreatedDate()))
-//                        .slug(account.getSlug())
-//                        .type(account.getType())
-//                        .number(account.getNumber())
-//                        .currency(account.getCurrency())
-//                        .build());
 
     }
 

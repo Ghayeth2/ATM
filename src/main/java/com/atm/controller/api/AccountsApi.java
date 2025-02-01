@@ -52,16 +52,20 @@ public class AccountsApi {
 
 //        log.info("Calling findAll with user ID: " + userDto.getUser().getId());
         log.info("Search query from request: " + searchQuery);
+
         Map<String, Object> response = new HashMap<>();
 //        log.info("It is being reached this far before crashing!!!!");
         Page<AccountDto> accounts = accountServices.findAll(userDto.getUser().getId(),page, searchQuery,
                 sortBy, order, from, to);
+        log.info("Total elements: "+accounts.getTotalElements());
 //        accounts.forEach(
 //                account -> System.out.println(account.getNumber()+
-//                        " "+account.getType())
+//                        " "+account.getBalance())
 //        );
 
+
 //        log.info("total pages: " + accounts.getSize());
+
         response.put("totalPages", accounts.getTotalPages());
         response.put("totalElements", accounts.getTotalElements());
         response.put("accounts", accounts.getContent());

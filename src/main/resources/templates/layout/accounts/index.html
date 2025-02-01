@@ -15,8 +15,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <section class="section">
-                <div class="section-header">
-
+                <div class="section-header d-flex align-items-center justify-content-between flex-wrap">
                     <div class="fa-align-left">
                         <label for="from" th:text="#{frm.start.date}"> </label> <br>
                         <input id="from" type="date" class="date-input">
@@ -25,38 +24,40 @@
                         <label for="to" th:text="#{frm.end.date}"> </label> <br>
                         <input id="to" type="date" class="date-input">
                     </div>
-                    <button id="applyDates" class="btn btn-primary float-right"
-                         onclick="filterByDates()"   th:text="#{blt.dates.apply}"></button>
-                    <button id="resetDatesBtn" class="btn btn-outline-dark float-right"
+
+
+
+                    <div class="dropdown mx-2">
+                        <button class="btn btn-primary dropdown-toggle"
+                                th:text="#{blt.sorting.by}" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" data-sort="number">Account number</a>
+                            <a class="dropdown-item" href="#" data-sort="type">Account type</a>
+                            <a class="dropdown-item" href="#" data-sort="createdDate">Created Date</a>
+                            <a class="dropdown-item" href="#" data-sort="balance">Account balance</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown mx-2">
+                        <button class="btn btn-primary dropdown-toggle"
+                                th:text="#{blt.sorting.order}" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" data-order="asc">Ascending order</a>
+                            <a class="dropdown-item" href="#" data-order="desc">Descending order</a>
+                        </div>
+                    </div>
+
+                    <button id="resetAllFilters" class="btn btn-outline-dark mx-2"
                             th:text="#{blt.dates.reset}"></button>
-                    <div class="card align-content-end float-right ">
-                        <div class="dropdown d-inline mr-2">
-                            <button class="btn btn-primary dropdown-toggle" type="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Sort by
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="sortByButton">
-                                <a class="dropdown-item" href="#" data-sort="number">Account number</a>
-                                <a class="dropdown-item" href="#" data-sort="type">Account type</a>
-                                <a class="dropdown-item" href="#" data-sort="createdDate">Created Date</a>
-                                <a class="dropdown-item" href="#" data-sort="balance">Account balance</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="dropdown d-inline mr-2">
-                            <button class="btn btn-primary dropdown-toggle" type="button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Sorting order
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="sortOrderButton">
-                                <a class="dropdown-item" href="#" data-order="asc">Ascending order</a>
-                                <a class="dropdown-item" href="#" data-order="desc">Descending order</a>
-                            </div>
-                        </div>
-                        <button id="applySortBtn" class="btn btn-primary">Apply Sorting</button>
-                    </div>
+
+                    <button id="applyFilters" class="btn btn-primary mx-2"
+                    th:text="#{blt.apply.filters}" ></button>
                 </div>
+
 
 
                 <div class="section-body">
@@ -161,7 +162,7 @@
             <td>${account.createdDate || ''}</td>
             <td>${account.currency || ''}</td>
             <td>${account.number || ''}</td>
-            <td>${account.balance || ''}</td>
+            <td>${account.balance || 0.0}</td>
             <td>${account.type || ''}</td>
             <td><button class="btn btn-danger deleteBtn" data-id="${account.slug}">Delete</button></td>
         `;
@@ -175,21 +176,21 @@
     }
 
     // Filtering by start and end dates
-    async function filterByDates () {
-        const from = document.getElementById('from').value;
-        const to = document.getElementById('to').value;
-
-        params = {
-            page: document.getElementById('currentPage').value || 1,
-            searchQuery: '',
-            sortBy: '',
-            order: '',
-            from: from,
-            to: to
-        }
-
-        await loadTableData(params)
-    }
+    // async function filterByDates () {
+    //     const from = document.getElementById('from').value;
+    //     const to = document.getElementById('to').value;
+    //
+    //     params = {
+    //         page: document.getElementById('currentPage').value || 1,
+    //         searchQuery: params.searchQuery ?? '',
+    //         sortBy: params.sortBy ?? '',
+    //         order: params.order ?? '',
+    //         from: from,
+    //         to: to
+    //     }
+    //
+    //     await loadTableData(params)
+    // }
 
     // Load table data
     async function loadTableData(params = {}) {
@@ -199,9 +200,7 @@
 
             // Adjust for your API structure
 
-            console.log("Received data data.items ", data)
             totalPages = data.totalPages;
-            console.log("Total pages of this request: ", totalPages)
             populateTableRows(data.accounts);
 
             // Update pagination
@@ -215,88 +214,86 @@
         }
     }
 
-    // Sort accounts
-        // Getting values of sortBy & order
-        let selectedSortField = '';
-        let selectedSortOrder = '';
-        document.addEventListener("DOMContentLoaded", () => {
+    // Handling resetting both html fields & f
+    async function resetFilters() {
+        document.getElementById('searchQuery').value = '';
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        // Loop through each input and set its value to an empty string
+        dateInputs.forEach(input => {
+            input.value = '';
+        });
+        let currentPage = document.getElementById('currentPage').value ?? 1;
+        params = {
+            page: currentPage,
+            searchQuery: '',
+            sortBy: '',
+            order: '',
+            from: '',
+            to: ''
+        }
+        loadTableData(params)
+    }
 
-            const updateDropdownButtonText = (button, text) => {
-                button.innerText = `${text} (Selected)`;
-            };
 
-            // Handle sorting field selection
-            const sortByButton = document.querySelector('button[aria-labelledby="sortByButton"]');
-            document.querySelectorAll('.dropdown-menu a[data-sort]').forEach(item => {
-                item.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    selectedSortField = event.target.getAttribute('data-sort');
-                    updateDropdownButtonText(sortByButton, event.target.innerText);
-                });
-            });
+    // Global variables for selected sorting options
+    let selectedSortField = '';
+    let selectedSortOrder = '';
 
-            // Handle sorting order selection
-            const sortOrderButton = document.querySelector('button[aria-labelledby="sortOrderButton"]');
-            document.querySelectorAll('.dropdown-menu a[data-order]').forEach(item => {
-                item.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    selectedSortOrder = event.target.getAttribute('data-order');
-                    updateDropdownButtonText(sortOrderButton, event.target.innerText);
-                });
-            });
+    // Wait for DOM to be ready
+    document.addEventListener("DOMContentLoaded", () => {
 
-            // Handle Apply Sorting button click
-            const applySortBtn = document.getElementById("applySortBtn");
-            applySortBtn.addEventListener('click', () => {
-                if (!selectedSortField || !selectedSortOrder) {
-                    alert("Please select both a sorting field and sorting order before applying.");
-                    return;
-                }
+        const updateDropdownButtonText = (button, text) => {
+            button.innerText = `${text} (Selected)`;
+        };
 
-                // Populate the fields used in `handleFilter`
-                const sortByField = document.getElementById("sortBy");
-                const sortOrderField = document.getElementById("sortOrder");
-
-                if (sortByField && sortOrderField) {
-                    sortByField.value = selectedSortField;
-                    sortOrderField.value = selectedSortOrder;
-                }
-                console.log("SelectedByField's value: ",selectedSortField
-                , " SelectedOrder's value: ", selectedSortOrder)
-                // Preparing params to send the request
-                params = {
-                    page: document.getElementById('currentPage').textContent || 1,
-                    searchQuery: '' || document.getElementById('searchQuery').value,
-                    sortBy: selectedSortField,
-                    order: selectedSortOrder,
-                    from: document.getElementById('from').value || '',
-                    to: document.getElementById('to').value || ''
-                }
-                // sending the request
-                loadTableData(params);
-                console.log("Sorting applied:", { sortBy: selectedSortField, order: selectedSortOrder });
+        // Handle sorting field selection
+        const sortByButton = document.querySelector('button[aria-labelledby="sortByButton"]');
+        document.querySelectorAll('.dropdown-menu a[data-sort]').forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                selectedSortField = event.target.getAttribute('data-sort');
+                updateDropdownButtonText(sortByButton, event.target.innerText);
             });
         });
 
+        // Handle sorting order selection
+        const sortOrderButton = document.querySelector('button[aria-labelledby="sortOrderButton"]');
+        document.querySelectorAll('.dropdown-menu a[data-order]').forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                selectedSortOrder = event.target.getAttribute('data-order');
+                updateDropdownButtonText(sortOrderButton, event.target.innerText);
+            });
+        });
 
+        // Handle Apply Sorting button click
+        const applySortBtn = document.getElementById("applyFilters");
+        applySortBtn.addEventListener('click', handleFilter);
+    });
 
-
-    // Handle search and filtering
+    // Function to handle search & filtering
     async function handleFilter() {
+        console.log("handleFilter() called...");
 
-        let fromDate = document.getElementById('from').value || '';
-        let toDate = document.getElementById('to').value || '';
-        let searchQuery = document.getElementById('searchQuery').value.trim() || '';
-        console.log("From date "+fromDate+" to date "+toDate+" search "+searchQuery);
-        params.page = document.getElementById('currentPage').textContent || 1;
-        params.sortBy = selectedSortField;
-        params.order = selectedSortOrder;
-        params.searchQuery = searchQuery;
-        params.from = fromDate;
-        params.toDate = toDate;
+        let fromDate = document.getElementById('from')?.value || '';
+        let toDate = document.getElementById('to')?.value || '';
+        let searchQuery = document.getElementById('searchQuery')?.value.trim() || '';
+
+        // Ensure params object exists
+        let params = {
+            page: document.getElementById('currentPage')?.textContent || 1,
+            sortBy: selectedSortField || '',
+            order: selectedSortOrder || '',
+            searchQuery: searchQuery,
+            from: fromDate,
+            to: toDate
+        };
+
+        console.log("Filter params:", params);
 
         await loadTableData(params);
     }
+
 
     // Handle pagination
     async function handlePagination(event) {
@@ -316,14 +313,15 @@
 
         params = {
             page: currentPage,
-            searchQuery: '',
-            sortBy: '',
-            order: '',
-            from: '',
-            to: ''
+            searchQuery: params.searchQuery ?? '',
+            sortBy: params.sortBy ?? '',
+            order: params.order ?? '',
+            from: params.from ?? '',
+            to: params.to ?? ''
         }
         await loadTableData(params);
     }
+
 
     // Handle delete request
     async function handleDelete(event) {
@@ -338,11 +336,11 @@
                 await loadTableData(
                     params = {
                         page: document.getElementById('currentPage').textContent || 1,
-                        searchQuery: '',
-                        sortBy: '',
-                        order: '',
-                        from: '',
-                        to: ''
+                        searchQuery: params.searchQuery ?? '',
+                        sortBy: params.sortBy ?? '',
+                        order: params.order ?? '',
+                        from: params.from ?? '',
+                        to: params.to ?? ''
                     }
                 );
             } catch (error) {
@@ -352,27 +350,14 @@
     }
 
     // Event listeners
-    document.getElementById('filterBtn').addEventListener('click', handleFilter);
-    document.getElementById('applyDates').addEventListener('click', handleFilter);
-    document.getElementById('resetDatesBtn').addEventListener('click', () => loadTableData()); // Reset dates and reload
+    document.getElementById('applyFilters').addEventListener('click', handleFilter);
+    document.getElementById('resetAllFilters').addEventListener('click', resetFilters);
     document.getElementById('prevPage').addEventListener('click', handlePagination);
     document.getElementById('nextPage').addEventListener('click', handlePagination);
 
     // Initial load
     window.addEventListener('DOMContentLoaded', () => {
         loadTableData(params); // Load table data on page load
-    });
-</script>
-
-<script>
-    document.getElementById('resetDatesBtn').addEventListener('click', function () {
-        // Select all input elements of type 'date'
-        const dateInputs = document.querySelectorAll('input[type="date"]');
-
-        // Loop through each input and set its value to an empty string
-        dateInputs.forEach(input => {
-            input.value = '';
-        });
     });
 </script>
 </html>

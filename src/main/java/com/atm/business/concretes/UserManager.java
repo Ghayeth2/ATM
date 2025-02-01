@@ -13,6 +13,7 @@ import com.atm.model.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-@AllArgsConstructor
+
 @Service
 @Log4j2
 public class UserManager implements UserService, UserDetailsService {
@@ -36,6 +37,33 @@ public class UserManager implements UserService, UserDetailsService {
     private TempUserServices tempUserServices;
     private BCryptPasswordEncoder passwordEncoder;
     private EmailServices emailServices;
+
+    @Value("${server.port}")
+    private int port;
+
+    @Value("${server.local.host}")
+    private String localHost;
+
+    @Value("${server.remote.host}")
+    private String remoteHost;
+
+    public UserManager(UserDao userDao,
+                       DtoEntityConverter converter,
+                       MessageServices messageServices,
+                       ConfirmationTokenServices confirmationTokenServices,
+                       RoleServices roleServices,
+                       TempUserServices tempUserServices,
+                       BCryptPasswordEncoder passwordEncoder,
+                       EmailServices emailServices) {
+        this.userDao = userDao;
+        this.converter = converter;
+        this.messageServices = messageServices;
+        this.confirmationTokenServices = confirmationTokenServices;
+        this.roleServices = roleServices;
+        this.tempUserServices = tempUserServices;
+        this.passwordEncoder = passwordEncoder;
+        this.emailServices = emailServices;
+    }
 
     @SneakyThrows
     @Override
@@ -100,7 +128,7 @@ public class UserManager implements UserService, UserDetailsService {
         User user = userDao.findByEmail(email);
         String subject = "Reset your password";
         // TODO: change the host to atmsemu.net for production
-        String link = "http://localhost:8080/atm/user/reset?token=" + token;
+        String link = "http://"+localHost+":"+port+"/atm/user/reset?token=" + token;
         String content = new EmailContentBuilder()
                 .buildBody(
                         user.getFirstName(),
