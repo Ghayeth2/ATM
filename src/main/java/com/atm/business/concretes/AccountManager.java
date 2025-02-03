@@ -163,11 +163,23 @@ public class AccountManager implements AccountServices {
                 .sortBy(sortBy)
                 .sortOrder(order)
                 .build();
-        log.info("sortBy: "+ request.getSortBy());
+//        log.info("sortBy: "+ request.getSortBy());
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-
-        return accountCriteria.findAllPaginatedAndFiltered(pageable, request);
-
+        // Filtering results to get formatted date list
+        Page<AccountDto> result = accountCriteria.findAllPaginatedAndFiltered(pageable, request);
+        // Filtering results to get createdDate as formatted String
+        return accountCriteria.findAllPaginatedAndFiltered(pageable, request)
+                .map(account -> AccountDto.builder()
+                        .slug(account.getSlug())
+                        .currency(account.getCurrency())
+                        .number(account.getNumber())
+                        .balance(account.getBalance())
+                        .type(account.getType())
+                        .createdDate(account.getCreatedDate())
+                        .formattedDate(formatter.formatDate(
+                                account.getCreatedDate()
+                        ))
+                        .build()
+                );
     }
-
 }

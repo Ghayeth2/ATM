@@ -20,6 +20,7 @@ import com.atm.model.entities.Transaction;
 import com.atm.business.strategies.abstracts.TransactionsStrategy;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,6 +51,15 @@ public class TransactionManager implements TransactionsServices {
 
     private final Map<String, TransactionsStrategy> strategies;
     private final TransactionDao transactionDao;
+
+    @Value("${server.port}")
+    private int port;
+
+    @Value("${server.remote.host}")
+    private String remoteHost;
+
+    @Value("${server.local.host}")
+    private String localHost;
 
     public TransactionManager(@Qualifier("depositStrategy")
                               TransactionsStrategy deposit,
@@ -76,17 +87,19 @@ public class TransactionManager implements TransactionsServices {
      * Accounts (type) >
      * Transactions (type, amount, balanceAfter, date),
      * with filtering feature.
+     *
      * @param filters
      * @return
      */
     // TODO: the controller will be an API. (Criteria API)
-    @Override @SneakyThrows
+    @Override
+    @SneakyThrows
     public Page<UserAccountTransaction> findAllFiltered(
             TransactionsFiltersRequest
-                                                      filters) {
+                    filters) {
         // Retrieving page size for transactions from config
         int pageSize = Integer.parseInt(configService.getProperties()
-                .getProperty("transactions.page.size"));
+                .getProperty("users.page.size"));
         // Setting created date formats
         LocalDateTime startDate;
         LocalDateTime endDate;
@@ -115,7 +128,7 @@ public class TransactionManager implements TransactionsServices {
             sortOrder = filters.sortOrder();
         }
         // Paging data
-        Pageable pageable = PageRequest.of(filters.page() -1,
+        Pageable pageable = PageRequest.of(filters.page() - 1,
                 pageSize);
         // Preparing request data
         TransactionsCriteriaRequest req =
@@ -148,13 +161,17 @@ public class TransactionManager implements TransactionsServices {
     }
 
     // TODO: the controller will be an API. (Pages, sort, and one filter element)
-    @Override @SneakyThrows
+    @Override
+    @SneakyThrows
     public Page<TransactionDto> findAllByAccount(String accountSlug,
                                                  String startDate,
                                                  String endDate,
                                                  int page,
                                                  String sortOrder,
                                                  String sortBy) {
+        // Host, port, Receipt Url builder credentials
+        String localProtocol = "http://";
+        String remoteProtocol = "https://";
         // Retrieving the account
         Account account = accountServices.findBySlug(accountSlug);
         // Default date or set date settings
@@ -184,9 +201,9 @@ public class TransactionManager implements TransactionsServices {
         // Pageable
         Pageable pageable = PageRequest.of(page - 1,
                 pageSize, sort);
-        System.out.println("Account data: "+
-                account.getId()+ " "
-        + account.getNumber());
+        System.out.println("Account data: " +
+                account.getId() + " "
+                + account.getNumber());
         // Calling dao, formatting date, mapping result back to data object
         return transactionDao.findAllByAccount(
                         account.getId(),
@@ -194,16 +211,19 @@ public class TransactionManager implements TransactionsServices {
                         endingDate,
                         pageable)
                 .map(tr -> TransactionDto.builder()
-                        .formattedDate(
-                                new DateFormatConverter()
-                                        .formatDate(tr.getCreatedDate())
-                        )
-                        .amount(tr.getAmount())
-                        .balanceAfter(tr.getBalanceAfter())
-                        .slug(tr.getSlug())
-                        .type(tr.getType())
-                        .receiptUrl(tr.getReceiptUrl())
-                        .build()
+                       .formattedDate(
+                               new DateFormatConverter()
+                                       .formatDate(tr.getCreatedDate())
+                       )
+                       .amount(tr.getAmount())
+                       .balanceAfter(tr.getBalanceAfter())
+                       .slug(tr.getSlug())
+                       .type(tr.getType())
+                       .accountSlug(accountSlug)
+                       .receiptUrl(
+                               localProtocol + localHost + ":" + port +
+                                       "/receipts" + "/" + tr.getReceiptUrl())
+                       .build()
                 );
     }
 
@@ -215,13 +235,15 @@ public class TransactionManager implements TransactionsServices {
      * Will create new Transaction record and insert it to database.
      * Fees will only be calculated for Transfer.
      * If want to display the fees, then call them from .properties config file
+     *
      * @param type
      * @param
      * @return
      */
 
 
-    @Override @SneakyThrows
+    @Override
+    @SneakyThrows
     public String newTransaction(String type, String amountRequest, String... numbers) {
         // If amount <= 0, throw InsufficientFundsException
         double amount = Double.parseDouble(amountRequest);
@@ -271,7 +293,7 @@ public class TransactionManager implements TransactionsServices {
         // Writing & creating the template / Handling exceptions
         // Creating Transaction Model and populating its data
         // Saving the Model to database. (TransactionDao)
-        return "Transaction is saved: "+saved.getType();
+        return "Transaction is saved: " + saved.getType();
     }
 
     private boolean doCurrenciesMatch(String sender, String receiver) {
@@ -285,7 +307,7 @@ public class TransactionManager implements TransactionsServices {
         // Preparing name of the file, dynamic outPutDir (path) from .properties + name
         String subNumber = accountNumber.substring(6, 11);
         String fileName = "receipt_" + subNumber + "_" + new StringGenerator().randomString(5)
-                +".html";
+                + ".html";
         String outPutPath = configService.getProperties().getProperty("transactions.receipts.path");
         System.out.println(outPutPath);
         // Checking if outPutDir exists - if not create it
@@ -359,8 +381,8 @@ public class TransactionManager implements TransactionsServices {
         if (sender == null) {
             receipt = new ReceiptData(
                     "",
-                    receiver.getUser().getFirstName()+" "
-                    +receiver.getUser().getLastName(),
+                    receiver.getUser().getFirstName() + " "
+                            + receiver.getUser().getLastName(),
                     "",
                     receiver.getNumber(),
                     "",
@@ -372,7 +394,7 @@ public class TransactionManager implements TransactionsServices {
             receipt = new ReceiptData(
                     sender.getUser().getFirstName() + " "
                             + sender.getUser().getLastName(),
-                    receiver.getUser().getFirstName()+ " "
+                    receiver.getUser().getFirstName() + " "
                             + receiver.getUser().getLastName(),
                     sender.getNumber(), receiver.getNumber(),
                     sender.getType(), receiver.getType(),

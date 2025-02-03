@@ -1,10 +1,11 @@
 const fetchAPI = {
     async get(url, params) {
         const queryString = new URLSearchParams(params).toString();
-        const endpoint = queryString ? `${url}?${queryString}` : url;
-        console.log("Sent request: "+ endpoint);
+        const fullUrl = queryString
+            ? `${window.location.origin}${url}?${queryString}`
+            : `${window.location.origin}${url}`;
         try {
-            const response = await fetch(endpoint, {
+            const response = await fetch(fullUrl, {
                 method: "GET",
             });
             if (!response.ok) throw new Error(`GET request failed with status: ${response.status}`);

@@ -15,5 +15,29 @@ public class AccountDto {
     private double balance;
     private String type;
     private LocalDateTime createdDate;
+    private String formattedDate;
 
+    /**
+     * This constructor is used when the Criteria API
+     * is executing.
+     * @param slug
+     * @param currency
+     * @param number
+     * @param balance
+     * @param type
+     * @param createdDate
+     */
+    public AccountDto(String slug,
+                      String currency,
+                      String number,
+                      double balance,
+                      String type,
+                      LocalDateTime createdDate) {
+        this.slug = slug;
+        this.currency = currency;
+        this.number = number;
+        this.balance = balance;
+        this.type = type;
+        this.createdDate = createdDate;
+    }
 }

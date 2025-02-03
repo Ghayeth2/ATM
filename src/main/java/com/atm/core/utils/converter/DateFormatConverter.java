@@ -21,7 +21,7 @@ public class DateFormatConverter {
         } catch (DateTimeParseException e) {
             log.error("Date formatter exception: "+e.getMessage());
         }
-        return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.SSSSSSSSS"));
+        return date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss"));
     }
 
     // Request data date formatter
