@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<!-- Head & css links -->
+<head th:replace="~{fragments/headFragment::head-section}">
+</head>
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div>
+        <!-- Navbar -->
+        <nav th:replace="~{fragments/navbarFragment::nav-section}"></nav>
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebarFragment::sidebar-section}"></div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-header">
+                    <h1>New Account</h1>
+                </div>
+
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <form th:method="post" th:action="@{/atm/transactions}" th:object="${transaction}">
+                                    <!--Success message-->
+                                    <div th:if="${success}">
+                                        <div class="alert alert-success text-center" th:text="${success}"></div>
+                                    </div>
+                                    <div th:if="${exception}">
+                                        <div class="alert alert-danger text-center" th:text="${exception}"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-6">
+                                            <label for="senderNumber">From</label>
+                                            <input id="senderNumber" type="text"
+                                                   th:field="*{senderNumber}"
+                                                   class="form-control" name="senderNumber"
+                                                   autofocus>
+                                            <p class="text-danger" th:if="${#fields.hasErrors()}"
+                                               th:errors="*{senderNumber}"></p>
+                                        </div>
+                                        <div class="form-group col-6">
+                                            <label for="amount">Amount</label>
+                                            <input id="amount"
+                                                   type="text" class="form-control" name="amount">
+                                            <p class="text-danger" th:if="${#fields.hasErrors()}"
+                                               th:errors="*{amount}"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="type"></label>
+                                        <input id="type" type="text"
+                                               th:value="Transfer" class="form-control" name="type" hidden="hidden">
+                                        <div class="invalid-feedback">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group col-6">
+                                            <label for="receiverNumber" class="d-block">To account:</label>
+                                            <input id="receiverNumber" type="text" class="form-control"
+                                                   name="receiverNumber"
+                                            >
+                                            <p class="text-danger" th:if="${#fields.hasErrors()}"
+                                               th:errors="*{receiverNumber}"></p>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                            Transfer
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footerFragment::footer-section}"></footer>
+        <!-- Js-links -->
+        <div th:replace="~{fragments/footFragment::js-links}"></div>
+    </div>
+</div>
+</body>
+</html>

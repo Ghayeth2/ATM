@@ -46,9 +46,10 @@ public class MainController {
         if (slug != null) {
             Account account = accountServices.findBySlug(slug);
             TransactionRequest request = TransactionRequest.builder()
-                    .receiverNumber(account.getNumber()).build();
+                    .senderNumber(account.getNumber()).build();
             model.addAttribute("transaction", request);
-        }
+        } else
+            model.addAttribute("transaction", new TransactionRequest());
         return "layout/transactions/transfer";
     }
 
@@ -69,7 +70,8 @@ public class MainController {
             TransactionRequest request = TransactionRequest.builder()
                     .receiverNumber(account.getNumber()).build();
             model.addAttribute("transaction", request);
-        }
+        } else
+            model.addAttribute("transaction", new TransactionRequest());
         return "layout/transactions/withdraw";
     }
 
@@ -82,7 +84,8 @@ public class MainController {
             TransactionRequest request = TransactionRequest.builder()
                     .receiverNumber(account.getNumber()).build();
             model.addAttribute("transaction", request);
-        }
+        } else
+            model.addAttribute("transaction", new TransactionRequest());
         return "layout/transactions/deposit";
     }
 

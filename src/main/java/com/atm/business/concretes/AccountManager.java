@@ -2,6 +2,7 @@ package com.atm.business.concretes;
 
 import com.atm.business.abstracts.AccountServices;
 import com.atm.business.abstracts.ConfigService;
+import com.atm.core.exceptions.NotFoundException;
 import com.atm.core.utils.converter.DateFormatConverter;
 import com.atm.core.utils.strings_generators.AccountNumberGenerator;
 import com.atm.core.utils.strings_generators.StringGenerator;
@@ -16,7 +17,9 @@ import com.atm.model.enums.Currencies;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,16 +71,21 @@ public class AccountManager implements AccountServices {
         return "Account deleted";
     }
 
-    @Override
+    @Override @SneakyThrows
     public Account findByNumber(String number) {
-        return accountDao.findByNumber(number).orElse(null);
+        return accountDao.findByNumber(number)
+                .orElseThrow(
+                        () -> new NotFoundException("Account not found")
+                );
     }
 
 
     // in case of other service class requires the model of this class
-    @Override
+    @Override @SneakyThrows
     public Account findBySlug(String slug) {
-        return accountDao.findBySlug(slug).orElseThrow();
+        return accountDao.findBySlug(slug).orElseThrow(
+                () -> new NotFoundException("Account not found")
+        );
     }
 
     /**

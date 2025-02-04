@@ -4,5 +4,5 @@ import com.atm.model.dtos.TransactionContext;
 import org.springframework.beans.factory.annotation.Value;
 
 public interface TransactionsStrategy {
-    double execute(TransactionContext context);
+    double[] execute(TransactionContext context);
 }

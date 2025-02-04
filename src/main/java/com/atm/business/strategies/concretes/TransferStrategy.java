@@ -2,17 +2,20 @@ package com.atm.business.strategies.concretes;
 
 import com.atm.business.abstracts.AccountServices;
 import com.atm.business.abstracts.ConfigService;
-import com.atm.core.exceptions.InsufficientFundsException;
+import com.atm.core.exceptions.InsufficientFundsExceptionTransfer;
+import com.atm.core.exceptions.InsufficientFundsExceptionWithdraw;
 import com.atm.model.dtos.TransactionContext;
 import com.atm.model.entities.Account;
 import com.atm.business.strategies.abstracts.TransactionsStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Slf4j
 @Component("transferStrategy")
 @RequiredArgsConstructor
 @Service
@@ -30,7 +33,7 @@ public class TransferStrategy implements TransactionsStrategy {
      */
     @Override
     @SneakyThrows
-    public double execute(TransactionContext context) {
+    public double[] execute(TransactionContext context) {
         System.out.println("Data sent to during Unit Test:"
                 + context.getAmount() + " " + context.getSender());
         // Retrieving fees values from config file
@@ -57,22 +60,22 @@ public class TransferStrategy implements TransactionsStrategy {
         String[] numbers = {sender.getNumber(), receiver.getNumber()};
 //        System.out.println(numbers.length);
         // Balance after transfer is executed for sender account
-        var balanceAfter = 0.0;
+        double[] balanceAfter = new double[2];
         // Insufficient funds // if not same user
         if (!isSameUserAccounts(sender, receiver)) {
             if (sender.getType().contains("Business")
                     && sender.getBalance() < totalBusiness)
-                throw new InsufficientFundsException("Insufficient funds");
+                throw new InsufficientFundsExceptionTransfer("Insufficient funds");
             else if (sender.getType().contains("Personal")
                     && sender.getBalance() < totalPersonal)
-                throw new InsufficientFundsException("Insufficient funds");
+                throw new InsufficientFundsExceptionTransfer("Insufficient funds");
             else if (sender.getType().contains("Savings")
                     && sender.getBalance() < totalSavings)
-                throw new InsufficientFundsException("Insufficient funds");
+                throw new InsufficientFundsExceptionTransfer("Insufficient funds");
         } // If same user
         else {
             if (sender.getBalance() < context.getAmount())
-                throw new InsufficientFundsException("Insufficient funds");
+                throw new InsufficientFundsExceptionTransfer("Insufficient funds");
         }
         // Insufficient funds exception ending
         // Is it transfer between user's accounts??
@@ -96,22 +99,27 @@ public class TransferStrategy implements TransactionsStrategy {
         return Objects.equals(sender.getUser().getId(), receiver.getUser().getId());
     }
 
-    private double transferFunds(double withdrawnAmount,
+    private double[] transferFunds(double withdrawnAmount,
                                  double receivedAmount, String... accounts) {
-        double balanceAfter = 0.0;
+        double balanceAfterWithdraw = 0.0;
+        double balanceAfterDeposit = 0.0;
 //        System.out.println(accounts.length);
         // Withdrawing amount from sender's account + fee
-        balanceAfter = accountServices.withdraw(
+        balanceAfterWithdraw = accountServices.withdraw(
                 accounts[0],
                 withdrawnAmount
         );
         // Depositing funds into receiver's account
-        accountServices.deposit(
+        balanceAfterDeposit = accountServices.deposit(
                 accounts[1],
                 receivedAmount
         );
         // Formatting the result to .2f
-        balanceAfter = Math.round(balanceAfter * 100) / 100.0;
-        return balanceAfter;
+        balanceAfterWithdraw = Math.round(balanceAfterWithdraw * 100) / 100.0;
+        balanceAfterDeposit = Math.round(balanceAfterDeposit * 100) / 100.0;
+
+        double[] res = {balanceAfterWithdraw, balanceAfterDeposit};
+        log.info("TransferStrategy -> execute -> double[] length: " + res.length);
+        return res;
     }
 }

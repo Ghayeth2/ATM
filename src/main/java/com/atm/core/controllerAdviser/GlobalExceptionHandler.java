@@ -3,16 +3,15 @@ package com.atm.core.controllerAdviser;
 import com.atm.business.concretes.MessageServices;
 import com.atm.core.exceptions.*;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @AllArgsConstructor
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -46,28 +45,68 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handler for InsufficientFundsException
+     * Handler for InsufficientFundsExceptionWithdraw
+     *
      * @param ex
      * @param redirectAttributes
      * @return
      */
-    @ExceptionHandler(InsufficientFundsException.class)
-    public String handleInsufficientFundsException(InsufficientFundsException ex, RedirectAttributes redirectAttributes) {
+    @ExceptionHandler(InsufficientFundsExceptionWithdraw.class)
+    public String handleInsufficientFundsException(InsufficientFundsExceptionWithdraw ex,
+                                                   RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("exception", ex.getMessage());
-        return "redirect:/atm/transactions/new";
+        log.error("GlobalExceptionHandler -> handleInsufficientFundsExceptionWithdraw");
+        log.error("GlobalExceptionHandler -> redirecting with error message...");
+        return "redirect:/atm/withdraw";
+    }
+
+    // NotFoundException handle it for each place it might occur and return it to right place
+
+    /**
+     * Handler for InsufficientFundsExceptionDeposit
+     *
+     * @param ex
+     * @param redirectAttributes
+     * @return
+     */
+    @ExceptionHandler(InsufficientFundsExceptionDeposit.class)
+    public String handleInsufficientFundsException(InsufficientFundsExceptionDeposit ex,
+                                                   RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+        log.error("GlobalExceptionHandler -> handleInsufficientFundsExceptionDeposit");
+        log.error("GlobalExceptionHandler -> redirecting with error message...");
+        return "redirect:/atm/deposit";
+    }
+
+    /**
+     * Handler for InsufficientFundsExceptionTransfer
+     *
+     * @param ex
+     * @param redirectAttributes
+     * @return
+     */
+    @ExceptionHandler(InsufficientFundsExceptionTransfer.class)
+    public String handleInsufficientFundsException(InsufficientFundsExceptionTransfer ex,
+                                                   RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("exception", ex.getMessage());
+        return "redirect:/atm/transfer";
     }
 
     /**
      * Handler for AccountsCurrenciesMismatchException during transfer transaction
      * if the currencies of the two accounts differ.
+     *
      * @param ex
      * @param redirectAttributes
      * @return
      */
     @ExceptionHandler(AccountsCurrenciesMismatchException.class)
-    public String handleAccountsCurrenciesMismatchException(AccountsCurrenciesMismatchException ex, RedirectAttributes redirectAttributes) {
+    public String handleAccountsCurrenciesMismatchException(AccountsCurrenciesMismatchException ex,
+                                                            RedirectAttributes redirectAttributes) {
+        log.error("GlobalExceptionHandler -> handleAccountsCurrenciesMismatchException");
         redirectAttributes.addFlashAttribute("exception", ex.getMessage());
-        return "redirect:/atm/transactions/new";
+        log.error("GlobalExceptionHandler -> redirecting with exception message...");
+        return "redirect:/atm/transfer";
     }
 
     // TODO: handle both exceptions (CurrencyMismatch, InsufficientFunds)
@@ -76,9 +115,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("exception",
-                 messageServices.getMessage("err.io.exception"));
+                messageServices.getMessage("err.io.exception"));
         return "redirect:/atm/profile";
     }
+
     // account
     @ExceptionHandler(NoSuchElementException.class)
     public String handleNoSuchElementException(NoSuchElementException ex, RedirectAttributes redirectAttributes) {

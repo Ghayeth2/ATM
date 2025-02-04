@@ -2,7 +2,7 @@ package com.atm.strategies.concretes;
 
 import com.atm.business.abstracts.AccountServices;
 import com.atm.business.strategies.concretes.DepositStrategy;
-import com.atm.core.exceptions.InsufficientFundsException;
+import com.atm.core.exceptions.InsufficientFundsExceptionWithdraw;
 import com.atm.model.dtos.TransactionContext;
 import com.atm.model.entities.Account;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,8 +65,8 @@ class DepositStrategyTest {
         // Setting amount
         context.setAmount(0);
         // Asserting throwing exception
-        InsufficientFundsException ex = assertThrows(
-                InsufficientFundsException.class,
+        InsufficientFundsExceptionWithdraw ex = assertThrows(
+                InsufficientFundsExceptionWithdraw.class,
                 () -> depositStrategy.execute(context)
         );
         assertEquals("Insufficient funds!", ex.getMessage());

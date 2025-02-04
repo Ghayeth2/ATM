@@ -50,6 +50,7 @@ public class TransactionsApi {
     @GetMapping("/all")
     public ResponseEntity<?> transactions(@ModelAttribute
                                           TransactionsFiltersRequest filters) {
+        System.out.println("Amounts: "+filters.fromAmount()+" "+filters.toAmount());
         // Preparing key, value pares
         Map<String, Object> response = new HashMap<>();
         Page<UserAccountTransaction> loadedTransactions =

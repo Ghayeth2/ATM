@@ -17,9 +17,9 @@ public class TransactionRequest {
     @Pattern(regexp = "^$|^\\d{4}-\\d{4}-\\d{4}-\\d{4}"
     , message = "Account number's format: XXXX-XXXX-XXXX-XXXX")
     private String senderNumber;
-    @NotEmpty(message = "Receiver account's number is required!")
     @Pattern(regexp = "^\\d{4}-\\d{4}-\\d{4}-\\d{4}",
     message = "Account number's format: XXXX-XXXX-XXXX-XXXX")
+    @NotEmpty(message = "Receiver account's number is required!")
     private String receiverNumber;
     @NotEmpty(message = "Type is required")
     private String type;

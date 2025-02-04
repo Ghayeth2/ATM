@@ -3,7 +3,7 @@ package com.atm.strategies.concretes;
 import com.atm.business.abstracts.AccountServices;
 import com.atm.business.abstracts.ConfigService;
 import com.atm.business.strategies.concretes.TransferStrategy;
-import com.atm.core.exceptions.InsufficientFundsException;
+import com.atm.core.exceptions.InsufficientFundsExceptionWithdraw;
 import com.atm.model.dtos.TransactionContext;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.User;
@@ -119,8 +119,8 @@ class TransferStrategyTest {
                 .amount(800).receiver(account1.getNumber())
                 .sender(account2.getNumber()).build();
         // Assertion for exception
-        InsufficientFundsException exception = Assertions.assertThrows(
-                InsufficientFundsException.class,
+        InsufficientFundsExceptionWithdraw exception = Assertions.assertThrows(
+                InsufficientFundsExceptionWithdraw.class,
                 () -> transferStrategy.execute(context)
         );
         Assertions.assertEquals("Insufficient funds", exception.getMessage());
