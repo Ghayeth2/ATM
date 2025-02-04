@@ -7,6 +7,9 @@ In addition to basic user features, the system includes administrative capabilit
 
 ## Used Technologies
 * **Java 17**
+* **JavaScript**
+* **HTML**
+* **Fetch API**
 * **Spring Boot**
 * **Spring Data JPA**
 * **Hibernate**
