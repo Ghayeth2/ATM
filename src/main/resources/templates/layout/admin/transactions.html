@@ -100,24 +100,19 @@
                                         <div class="card-body">
                                             <nav aria-label="Page navigation example">
                                                 <ul class="pagination">
-                                                    <li class="page-item"><a class="page-link"
-                                                                             id="prevPage">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a id="currentPage" class="page-link"
-                                                                             href="#"></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" id="nextPage">Next</a>
-                                                    </li>
-                                                    <li class="page-item"><a id="totalPages" class="page-link" href="#">Next</a>
+                                                    <li class="page-item">
+                                                        <a class="page-link" id="prevPage" href="#">Previous</a>
                                                     </li>
                                                     <li class="page-item">
-                                                        <p>Total Elements: </p>
-                                                        <a class="page-link" disabled="true" id="totalElements">
-                                                        </a>
+                                                        <a class="page-link" id="currentPage" href="#">2</a>
                                                     </li>
-
+                                                    <li class="page-item">
+                                                        <a class="page-link" id="nextPage" href="#">Next</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link" id="totalPages" href="#">2</a>
+                                                    </li>
                                                 </ul>
-
                                             </nav>
                                         </div>
                                     </div>
@@ -191,6 +186,7 @@
             // Adjust for your API structure
 
             totalPages = data.totalPages;
+            document.getElementById("totalPages").value = totalPages
             populateTableRows(data.transactions);
 
             // Update pagination
@@ -297,6 +293,7 @@
 
     // Handle pagination
     async function handlePagination(event) {
+        event.preventDefault(); // Prevent the default link behavior
         const targetId = event.target.id;
         let currentPage = parseInt(document.getElementById('currentPage').textContent, 10);
         const prevPageBtn = document.getElementById('prevPage');

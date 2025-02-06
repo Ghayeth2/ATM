@@ -51,15 +51,4 @@ public class ConfigManager implements ConfigService {
             updateProperty("account.tail.number", tail);
         }
     }
-
-    // Used to set param within successes.properties file
-    // scs.accounts=...${param}....
-    @Override
-    public void replaceMsgParameter(String param, String value, String property) {
-        Properties messages = new Properties();
-        Map<String, String> m = new HashMap<>();
-        m.put(param, value);
-        StrSubstitutor sub = new StrSubstitutor(m);
-        String msg = sub.replace(messages.getProperty(property));
-    }
 }

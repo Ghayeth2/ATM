@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<!-- Head & css links -->
+<head th:replace="~{fragments/headFragment::head-section}">
+    <style>
+        /* Style the tab container */
+
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div>
+        <!-- Navbar -->
+        <nav th:replace="~{fragments/navbarFragment::nav-section}"></nav>
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebarFragment::sidebar-section}"></div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-header">
+                    <h1>Settings</h1>
+                </div>
+                <div class="section-body">
+                    <div class="d-flex align-items-start">
+                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab"
+                             role="tablist" aria-orientation="vertical">
+                            <!--                            Tabs buttons -->
+                            <button class="nav-link active" id="v-pills-home-tab"
+                                    data-bs-toggle="pill" data-bs-target="#v-pills-home"
+                                    type="button" role="tab" aria-controls="v-pills-home"
+                                    aria-selected="true"
+                                    th:text="#{tbs.settings.page.limit}">
+
+                            </button>
+                            <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-profile" type="button" role="tab"
+                                    aria-controls="v-pills-profile"
+                                    aria-selected="false"
+                                    th:text="#{tbs.settings.account.numbers}">
+
+                            </button>
+                            <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill"
+                                    data-bs-target="#v-pills-messages" type="button" role="tab"
+                                    aria-controls="v-pills-messages"
+                                    aria-selected="false"
+                                    th:text="#{tbs.settings.transaction.fees}">
+
+                            </button>
+                            <!--                            Tabs buttons -->
+
+                        </div>
+                        <div class="tab-content" id="v-pills-tabContent">
+                            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                                 aria-labelledby="v-pills-home-tab">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="accounts.page.size" class="form-label">Accounts</label>
+                                        <input id="accounts.page.size" type="text" class="form-control"
+                                               aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Account transactions</label>
+                                        <input id="transactions.page.size" type="text" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Users' transactions</label>
+                                        <input id="users.page.size" type="text" class="form-control">
+                                    </div>
+                                    <button type="button" onclick="pageSettings()" class="btn btn-primary">Apply</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
+                                 aria-labelledby="v-pills-profile-tab">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="account.lead.number" class="form-label">Lead number</label>
+                                        <input id="account.lead.number" type="text" class="form-control" aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tail number</label>
+                                        <input id="account.tail.number" type="text" class="form-control">
+                                    </div>
+                                    <button type="button" onclick="numbersSettings()" class="btn btn-primary">Apply</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
+                                 aria-labelledby="v-pills-messages-tab">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="transactions.fees.personal" class="form-label">Personal fee</label>
+                                        <input type="text" class="form-control" id="transactions.fees.personal"
+                                               aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Business fee</label>
+                                        <input type="text" id="transactions.fees.business" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Savings fee</label>
+                                        <input type="text" id="transactions.fees.savings" class="form-control">
+                                    </div>
+                                    <button type="button" onclick="feeSettings()" class="btn btn-primary">Apply</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footerFragment::footer-section}"></footer>
+        <!-- Js-links -->
+        <div th:replace="~{fragments/footFragment::js-links}"></div>
+    </div>
+</div>
+<script>
+    const baseApiUrl = '/atm/api/settings'; // Replace with your actual API URL
+    // On page load get all values
+    loadAllValues()
+    async function loadAllValues() {
+        const endPoint = baseApiUrl + "/values";  // API endpoint to fetch data
+        try {
+            // Fetch data from the backend
+            const data = await fetchAPI.get(endPoint);
+
+            // Log the received data
+            console.log("Received data", data);
+
+            // Loop through each key-value pair in the data
+            for (const [key, value] of Object.entries(data)) {
+                // Get the input element by its id (which matches the key)
+                const inputElement = document.getElementById(key);
+
+                // If the input element exists, set its value
+                if (inputElement) {
+                    inputElement.value = value;
+                } else {
+                    console.warn(`Input element with id '${key}' not found.`);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+
+    async function pageSettings() {
+        console.log("this method is being called with data: ")
+        console.log(document.getElementById("users.page.size").value)
+        console.log(document.getElementById("accounts.page.size").value)
+        console.log(document.getElementById("transactions.page.size").value)
+        // Building endpoint
+        const endPoint = baseApiUrl + "/update";
+        // Getting values from inputs & building parameters
+        const request = {
+            "accounts.page.size": document.getElementById("accounts.page.size").value,
+            "transactions.page.size": document.getElementById("transactions.page.size").value,
+            "users.page.size": document.getElementById("users.page.size").value
+        }
+        // Sending the request
+        try {
+            const response = await fetchAPI.post(endPoint, request);
+            // Loop through each key-value pair in the data
+            for (const [key, value] of Object.entries(response)) {
+                // Get the input element by its id (which matches the key)
+                const inputElement = document.getElementById(key);
+
+                // If the input element exists, set its value
+                if (inputElement) {
+                    inputElement.value = value;
+                } else {
+                    console.warn(`Input element with id '${key}' not found.`);
+                }
+            }
+            alert("Page settings successfully updated");
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    async function feeSettings() {
+        // Building endpoint
+        const endPoint = baseApiUrl + "/update";
+        // Getting values from inputs & building parameters
+        const request = {
+            "transactions.fees.personal": document.getElementById("" +
+                "transactions.fees.personal").value,
+            "transactions.fees.business": document.getElementById("transactions." +
+                "fees.business").value,
+            "transactions.fees.savings": document.getElementById("" +
+                "transactions.fees.savings").value
+        }
+        // Sending the request
+        try {
+            const response = await fetchAPI.post(endPoint, request);
+            // Loop through each key-value pair in the data
+            for (const [key, value] of Object.entries(response)) {
+                // Get the input element by its id (which matches the key)
+                const inputElement = document.getElementById(key);
+
+                // If the input element exists, set its value
+                if (inputElement) {
+                    inputElement.value = value;
+                } else {
+                    console.warn(`Input element with id '${key}' not found.`);
+                }
+            }
+            alert("Fees settings successfully updated");
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+
+
+    async function numbersSettings() {
+        // Building endpoint
+        const endPoint = baseApiUrl + "/update";
+        // Getting values from inputs & building parameters
+        const request = {
+            "account.lead.number": document.getElementById("" +
+                "account.lead.number").value,
+            "account.tail.number": document.getElementById("" +
+                "account.tail.number").value
+        }
+        // Sending the request
+        try {
+            const response = await fetchAPI.post(endPoint, request);
+            // Loop through each key-value pair in the data
+            for (const [key, value] of Object.entries(response)) {
+                // Get the input element by its id (which matches the key)
+                const inputElement = document.getElementById(key);
+
+                // If the input element exists, set its value
+                if (inputElement) {
+                    inputElement.value = value;
+                } else {
+                    console.warn(`Input element with id '${key}' not found.`);
+                }
+            }
+            alert("Account numbers settings successfully updated");
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+</script>
+</body>
+</html>

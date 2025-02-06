@@ -91,25 +91,21 @@
                                         <div class="card-body">
                                             <nav aria-label="Page navigation example">
                                                 <ul class="pagination">
-                                                    <li class="page-item"><a class="page-link"
-                                                                             id="prevPage">Previous</a>
-                                                    </li>
-                                                    <li class="page-item"><a id="currentPage" class="page-link"
-                                                                             hidden="hidden" href="#"></a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" id="nextPage">Next</a>
-                                                    </li>
-                                                    <li class="page-item"><a id="totalPages" class="page-link" href="#"></a>
+                                                    <li class="page-item">
+                                                        <a class="page-link" id="prevPage" href="#">Previous</a>
                                                     </li>
                                                     <li class="page-item">
-                                                        <p>Total Elements: </p>
-                                                        <a class="page-link" disabled="true" id="totalElements">
-                                                        </a>
+                                                        <a class="page-link" id="currentPage" href="#">2</a>
                                                     </li>
-
+                                                    <li class="page-item">
+                                                        <a class="page-link" id="nextPage" href="#">Next</a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link" id="totalPages" href="#">2</a>
+                                                    </li>
                                                 </ul>
-
                                             </nav>
+
                                         </div>
                                     </div>
                                 </div>
@@ -140,6 +136,8 @@
         from: '',
         to: ''
     };
+
+
     // Utility function to populate table rows
     // Populate table rows
     function populateTableRows(data) {
@@ -195,12 +193,12 @@
 
     async function historyHandler(event) {
         const slug = event.target.dataset.id;
-        console.log("Account slug for history: "+slug);
+        console.log("Account slug for history: " + slug);
         // Build the correct endpoint dynamically based on the current host and port
         const baseUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
         console.log("baseUrl: " + baseUrl);
         let endpoint = '/atm/user/transactions?slug=' + slug;
-        console.log("Sent request:"+ baseUrl+endpoint);
+        console.log("Sent request:" + baseUrl + endpoint);
         window.location.href = baseUrl + endpoint;
     }
 
@@ -244,6 +242,7 @@
             // Adjust for your API structure
 
             totalPages = data.totalPages;
+            document.getElementById("totalPages").value = totalPages
             populateTableRows(data.accounts);
 
             // Update pagination
@@ -340,8 +339,9 @@
 
     // Handle pagination
     async function handlePagination(event) {
+        event.preventDefault(); // Prevent the default link behavior
         const targetId = event.target.id;
-        let currentPage = parseInt(document.getElementById('currentPage').textContent, 10);
+        let currentPage = parseInt(document.getElementById('currentPage').textContent, 10) || 1; // Default to 1 if no currentPage text
         const prevPageBtn = document.getElementById('prevPage');
         const nextPageBtn = document.getElementById('nextPage');
 
@@ -356,6 +356,10 @@
             currentPage += 1;
         }
 
+        // Update the current page display (use the page number as text)
+        document.getElementById('currentPage').textContent = currentPage;
+
+        // Disable previous and next buttons when on first/last page
         prevPageBtn.disabled = currentPage === 1;
         nextPageBtn.disabled = currentPage === totalPages;
 
@@ -370,9 +374,8 @@
         };
 
         console.log("Pagination params:", params);
-        await loadTableData(params);
+        await loadTableData(params);  // Assume this function loads the table data with the provided params
     }
-
 
 
     // Handle delete request

@@ -1,11 +1,9 @@
 package com.atm.dao.daos;
 
-import com.atm.controller.api.AccountsApi;
 import com.atm.core.config.TestAuditingConfig;
-import com.atm.model.dtos.payloads.records.responses.TransactionDto;
+import com.atm.model.dtos.payloads.responses.TransactionDto;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.Transaction;
-import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

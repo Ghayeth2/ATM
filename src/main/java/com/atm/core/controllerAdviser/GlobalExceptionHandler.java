@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -109,14 +111,34 @@ public class GlobalExceptionHandler {
         return "redirect:/atm/transfer";
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public Map<String, String> handleRuntimeException(RuntimeException ex) {
+        log.error("GlobalExceptionHandler -> handleRuntimeException");
+        log.error("GlobalExceptionHandler -> redirecting with exception message...");
+        Map<String, String> map = new HashMap<>();
+        map.put("error", ex.getMessage());
+        return map;
+    }
+
     // TODO: handle both exceptions (CurrencyMismatch, InsufficientFunds)
 
     // account
     @ExceptionHandler(IOException.class)
     public String handleIOException(IOException ex, RedirectAttributes redirectAttributes) {
+        // Adding logger
+        System.out.println("Is there exception being caught??");
+        log.error("GlobalExceptionHandler -> handleIOException: "+ex.getMessage());
         redirectAttributes.addFlashAttribute("exception",
                 messageServices.getMessage("err.io.exception"));
         return "redirect:/atm/profile";
+    }
+
+    @ExceptionHandler(NoConfigKeyFoundException.class)
+    public Map<String, String> handleNoConfigKeyFoundException(NoConfigKeyFoundException ex) {
+        log.error("GlobalExceptionHandler -> handleNoConfigKeyFoundException");
+        Map<String, String> map = new HashMap<>();
+        map.put("error", ex.getMessage());
+        return map;
     }
 
     // account

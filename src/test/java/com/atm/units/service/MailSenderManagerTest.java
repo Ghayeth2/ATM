@@ -1,7 +1,7 @@
 package com.atm.units.service;
 
-import com.atm.business.abstracts.EmailSenderServices;
-import com.atm.business.concretes.EmailSenderServicesManager;
+import com.atm.business.abstracts.EmailServices;
+import com.atm.model.dtos.EmailDetails;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.SneakyThrows;
@@ -30,7 +30,7 @@ public class MailSenderManagerTest {
 
 
     @InjectMocks
-    private EmailSenderServicesManager emailSenderServices;
+    private EmailServices emailSenderServices;
 
     @Test
     // should send an email
@@ -39,11 +39,11 @@ public class MailSenderManagerTest {
 //        MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessage mimeMessage = new JavaMailSenderImpl().createMimeMessage();
 
-        String to = "to";
-        String email = "email";
+        EmailDetails testEmail = EmailDetails
+                .builder().body("sdfo").build();
         when(mailSender.createMimeMessage())
                 .thenReturn(mimeMessage);
-        emailSenderServices.send(to, email);
+        emailSenderServices.sendEmail(testEmail);
         ArgumentCaptor<MimeMessage> captor =
                 ArgumentCaptor.forClass(MimeMessage.class);
         verify(mailSender).send(captor.capture());
@@ -61,7 +61,7 @@ public class MailSenderManagerTest {
         NullPointerException ex = org.junit.jupiter.api
                 .Assertions.assertThrows(
                         NullPointerException.class,
-                        () -> emailSenderServices.send("to", "email")
+                        () -> emailSenderServices.sendEmail(new EmailDetails())
                 );
         Assertions.assertThat(ex.getMessage())
                 .isEqualTo("Null pointer exception");

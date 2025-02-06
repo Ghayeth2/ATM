@@ -1,8 +1,7 @@
 package com.atm.dao.criterias;
 
 import com.atm.model.dtos.payloads.records.requests.TransactionsCriteriaRequest;
-import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
-import com.atm.model.dtos.payloads.requests.TransactionRequest;
+import com.atm.model.dtos.payloads.responses.UserAccountTransaction;
 import com.atm.model.dtos.payloads.responses.TransactionsPageImpRes;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.Transaction;
@@ -12,7 +11,6 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

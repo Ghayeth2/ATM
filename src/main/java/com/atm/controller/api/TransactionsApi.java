@@ -2,10 +2,8 @@ package com.atm.controller.api;
 
 import com.atm.business.abstracts.TransactionsServices;
 import com.atm.model.dtos.payloads.records.requests.TransactionsFiltersRequest;
-import com.atm.model.dtos.payloads.records.responses.TransactionDto;
-import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.atm.model.dtos.payloads.responses.TransactionDto;
+import com.atm.model.dtos.payloads.responses.UserAccountTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;

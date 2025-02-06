@@ -7,8 +7,8 @@ import com.atm.dao.criterias.TransactionsCriteria;
 import com.atm.dao.daos.TransactionDao;
 import com.atm.model.dtos.payloads.records.requests.TransactionsCriteriaRequest;
 import com.atm.model.dtos.payloads.records.requests.TransactionsFiltersRequest;
-import com.atm.model.dtos.payloads.records.responses.TransactionDto;
-import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
+import com.atm.model.dtos.payloads.responses.TransactionDto;
+import com.atm.model.dtos.payloads.responses.UserAccountTransaction;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.Transaction;
 import com.atm.model.entities.User;
@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +28,6 @@ import org.springframework.data.domain.Pageable;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
@@ -151,8 +149,9 @@ class TransactionManagerTest {
                         .type("Business").user(user).currency("$")
                         .balance(800.0).build();
         // Preparing Mocks for each external service
+        double[] balance = {400};
         Mockito.when(strategy.execute(Mockito.any()))
-                .thenReturn(400.0);
+                .thenReturn(balance);
         Mockito.when(accountServices.findByNumber(Mockito.anyString()))
                 .thenReturn(account);
         Mockito.when(configService.getProperties())

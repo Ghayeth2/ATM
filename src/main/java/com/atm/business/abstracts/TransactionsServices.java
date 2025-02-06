@@ -2,8 +2,8 @@ package com.atm.business.abstracts;
 
 
 import com.atm.model.dtos.payloads.records.requests.TransactionsFiltersRequest;
-import com.atm.model.dtos.payloads.records.responses.TransactionDto;
-import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
+import com.atm.model.dtos.payloads.responses.TransactionDto;
+import com.atm.model.dtos.payloads.responses.UserAccountTransaction;
 import org.springframework.data.domain.Page;
 
 public interface TransactionsServices {

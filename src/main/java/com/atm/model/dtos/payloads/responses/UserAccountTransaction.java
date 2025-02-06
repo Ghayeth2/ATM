@@ -1,9 +1,8 @@
-package com.atm.model.dtos.payloads.records.responses;
+package com.atm.model.dtos.payloads.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

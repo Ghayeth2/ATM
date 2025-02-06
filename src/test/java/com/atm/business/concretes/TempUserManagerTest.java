@@ -1,8 +1,10 @@
 package com.atm.business.concretes;
 
+import com.atm.business.abstracts.EmailServices;
 import com.atm.core.utils.validators.UserNameExistsValidator;
 import com.atm.dao.concretes.TempUserDaoImpl;
 import com.atm.dao.daos.TempUserDao;
+import com.atm.model.dtos.EmailDetails;
 import com.atm.model.dtos.TempUser;
 import com.atm.model.dtos.UserDto;
 import com.atm.model.entities.ConfirmationToken;
@@ -35,7 +37,7 @@ class TempUserManagerTest {
     private MessageServices messageServices;
 
     @Mock
-    private EmailSenderServicesManager emailSenderServicesManager;
+    private EmailServices emailSenderServicesManager;
 
     @Mock
     private UserNameExistsValidator userNameExistsValidator;
@@ -84,7 +86,7 @@ class TempUserManagerTest {
                 .saveConfirmationToken(Mockito.any());
         // Mocking sending mail to registered user
         Mockito.doNothing().when(emailSenderServicesManager)
-                .send(Mockito.anyString(), Mockito.any());
+                .sendEmail(Mockito.any( EmailDetails.class));
         // Mocking response message from the service
         Mockito.when(messageServices.getMessage(Mockito.anyString()))
                 .thenReturn("User registered successfully");

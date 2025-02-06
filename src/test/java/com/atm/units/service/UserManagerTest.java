@@ -7,10 +7,7 @@ import com.atm.core.exceptions.PasswordMisMatchException;
 import com.atm.core.utils.converter.DtoEntityConverter;
 import com.atm.core.utils.validators.UserNameExistsValidator;
 import com.atm.dao.daos.UserDao;
-import com.atm.model.dtos.CustomUserDetailsDto;
-import com.atm.model.dtos.TempUser;
-import com.atm.model.dtos.UserDetailsDto;
-import com.atm.model.dtos.UserDto;
+import com.atm.model.dtos.*;
 import com.atm.model.entities.ConfirmationToken;
 import com.atm.model.entities.Role;
 import com.atm.model.entities.User;
@@ -58,7 +55,7 @@ public class UserManagerTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Mock
-    private EmailSenderServices emailServices;
+    private EmailServices emailServices;
 
     @Mock
     private TempUserServices tempUserServices;
@@ -137,7 +134,7 @@ public class UserManagerTest {
         when(cServices.newConfirmationToken(anyString()))
                 .thenReturn(token);
         doNothing().when(cServices).saveConfirmationToken(any(ConfirmationToken.class));
-        doNothing().when(emailServices).send(user.getEmail(), message);
+        doNothing().when(emailServices).sendEmail(new EmailDetails());
         userManager.handleResetPasswortMailSending(email);
         // Assert
         // Using the Mockito Framework's verify() method
@@ -145,9 +142,8 @@ public class UserManagerTest {
         // Along with that, we can use ArgumentsMatchers
         // To check whether the arguments are the same or not
         Mockito.verify(emailServices)
-                .send(
-                        ArgumentMatchers.eq(user.getEmail()),
-                        ArgumentMatchers.contains(message)
+                .sendEmail(
+                        new EmailDetails()
                 );
     }
 

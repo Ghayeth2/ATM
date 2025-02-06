@@ -1,10 +1,9 @@
-package com.atm.model.dtos.payloads.records.responses;
+package com.atm.model.dtos.payloads.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
 

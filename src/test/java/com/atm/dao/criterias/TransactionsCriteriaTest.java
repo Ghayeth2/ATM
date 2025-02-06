@@ -6,7 +6,7 @@ import com.atm.dao.daos.AccountDao;
 import com.atm.dao.daos.TransactionDao;
 import com.atm.dao.daos.UserDao;
 import com.atm.model.dtos.payloads.records.requests.TransactionsCriteriaRequest;
-import com.atm.model.dtos.payloads.records.responses.UserAccountTransaction;
+import com.atm.model.dtos.payloads.responses.UserAccountTransaction;
 import com.atm.model.entities.Account;
 import com.atm.model.entities.Transaction;
 import com.atm.model.entities.User;
@@ -29,9 +29,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
