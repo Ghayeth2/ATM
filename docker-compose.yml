@@ -1,21 +1,55 @@
-#version: "3.1"
+#version: "3.7"
+
 
 services:
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
     ports:
       - "6379:6379"
     restart: always
+    networks:
+      - atm_network
 
   db:
     image: mysql
-    ports:
-      - "3306:3306"
+    container_name: atm_mysql
+    networks:
+      - atm_network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
-      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_ROOT_PASSWORD:
       MYSQL_DATABASE: atm
+    restart: always
     volumes:
-      - data:/var/lib/mysql
+      - atm_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  atm:
+    networks:
+      - atm_network
+    depends_on:
+       db:
+         condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/atm?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD:
+    volumes:
+      - receipts_data:/apps/atm-app/receipts
+    build: .
+    image: atm
+    ports:
+      - "30:30"
+
+networks:
+  atm_network:
+    name: net_atm
 
 volumes:
-  data:
+  atm_data:
+  receipts_data:
