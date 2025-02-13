@@ -27,6 +27,9 @@
                                     <!--Success message-->
                                     <div th:if="${success}">
                                         <div class="alert alert-success text-center" th:text="${success}"></div>
+                                    </div>
+                                    <div th:if="${exception}">
+                                        <div class="alert alert-danger text-center" th:text="${exception}"></div>
                                     </div> <!--Username Exists Error-->
                                     <div class="row">
                                         <div class="form-group col-6">
@@ -50,7 +53,7 @@
                                     <div class="form-group">
                                         <label for="type"></label>
                                         <input id="type" type="text"
-                                               th:value="Withdrawal"  class="form-control" name="type" hidden="hidden">
+                                               th:value="Withdrawal" class="form-control" name="type" hidden="hidden">
                                         <div class="invalid-feedback">
                                         </div>
                                     </div>
@@ -58,7 +61,8 @@
                                     <div class="row">
                                         <div class="form-group col-6">
                                             <label for="senderNumber" class="d-block"></label>
-                                            <input id="senderNumber" type="text" class="form-control" name="senderNumber"
+                                            <input id="senderNumber" type="text" class="form-control"
+                                                   name="senderNumber"
                                                    hidden="hidden">
                                         </div>
                                     </div>

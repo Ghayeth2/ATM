@@ -270,7 +270,7 @@ public class TransactionManager implements TransactionsServices {
         String receiptUrl = createReceipt(template, numbers[1]);
         // If transfer do the following
         // If sender number exists => Transfer, otherwise => withdraw / deposit
-        // If Transfer: sender is the parent account, else: receiver is parent
+        // If Transfer: sender is the parenta account, else: receiver is parent
         if (!numbers[0].isEmpty() || !numbers[0].isBlank()) {
             log.info("TransactionManager -> TransferStrategy -> create & save two transactions...");
             // Retrieving accounts
@@ -279,14 +279,14 @@ public class TransactionManager implements TransactionsServices {
             Account receiverAccount = accountServices.findByNumber(numbers[1]);
             // Sender account transaction
             Transaction sender = Transaction.builder().type(type)
-                    .receiptUrl(receiptUrl).amount(amount)
-                    .balanceAfter(balanceAfter[0])
+                    .receiptUrl(receiptUrl).amount(Math.round(amount * 100) / 100.0)
+                    .balanceAfter(Math.round(balanceAfter[0] * 100) / 100.0)
                     .account(senderAccount).build();
             sender.setSlug(new StringGenerator().slug(receiptUrl));
             // Receiver account transaction
             Transaction receiver = Transaction.builder().type(type)
-                    .receiptUrl(receiptUrl).amount(amount)
-                    .balanceAfter(balanceAfter[1])
+                    .receiptUrl(receiptUrl).amount(Math.round(amount * 100) / 100.0)
+                    .balanceAfter(Math.round(balanceAfter[1] * 100) / 100.0)
                     .account(receiverAccount).build();
             receiver.setSlug(new StringGenerator().slug(receiptUrl+numbers[1]));
             // Save the two transactions
@@ -298,8 +298,9 @@ public class TransactionManager implements TransactionsServices {
         // Retrieving target account (withdraw / deposit)
         Account account = accountServices.findByNumber(numbers[1]);
         Transaction transaction = Transaction.builder().type(type)
-                .receiptUrl(receiptUrl).balanceAfter(balanceAfter[0])
-                .amount(amount).account(account).build();
+                .receiptUrl(receiptUrl).balanceAfter(
+                        Math.round(balanceAfter[0] * 100) / 100.0)
+                .amount(Math.round(amount * 100) / 100.0).account(account).build();
         transaction.setSlug(new StringGenerator().slug(receiptUrl));
         // Saving Transaction record
         Transaction saved = transactionDao.save(transaction);
@@ -321,17 +322,23 @@ public class TransactionManager implements TransactionsServices {
     private String createReceipt(String template, String accountNumber) {
         // Preparing name of the file, dynamic outPutDir (path) from .properties + name
         String subNumber = accountNumber.substring(6, 11);
+        log.info("Creating receipt file..");
         String fileName = "receipt_" + subNumber + "_" + new StringGenerator().randomString(5)
                 + ".html";
+        log.info("path of receipts where it will be, is being extracted...");
         String outPutPath = configService.getProperties().getProperty("transactions.receipts.path");
         System.out.println(outPutPath);
+        log.info("Output path: " + outPutPath);
         // Checking if outPutDir exists - if not create it
+        log.info("Checking if output directory exists...");
         Path url = Paths.get(outPutPath);
         Files.createDirectories(url);
         Path directory = url;
+        log.info("Resolving file's path name...");
         Path filePath = directory.resolve(fileName);
         // Writing template to outPutDirectory
         Files.write(filePath, template.getBytes());
+        log.info("File is written to output path.");
         return fileName;
     }
 

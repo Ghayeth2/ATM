@@ -181,7 +181,7 @@ public class AccountManager implements AccountServices {
                         .slug(account.getSlug())
                         .currency(account.getCurrency())
                         .number(account.getNumber())
-                        .balance(account.getBalance())
+                        .balance(Math.round(account.getBalance() * 100) / 100.0)
                         .type(account.getType())
                         .createdDate(account.getCreatedDate())
                         .formattedDate(formatter.formatDate(

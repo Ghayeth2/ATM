@@ -13,12 +13,377 @@
         <!-- Sidebar -->
         <div th:replace="~{fragments/sidebarFragment::sidebar-section}"></div>
         <!-- Main Content -->
-        <div th:replace="~{fragments/blankFragment::blank-section}"></div>
+        <div class="main-content">
+            <section class="section">
+                <div class="section-header">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="col-12 col-md-6 col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Filters</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="accordion">
+                                <div sec:authorize="hasRole('ROLE_ADMIN')"
+                                     class="accordion">
+                                    <div class="accordion-header" role="button" data-toggle="collapse"
+                                         data-target="#panel-body-1">
+                                        <h4>Users</h4>
+                                    </div>
+                                    <div
+                                            class="accordion-body collapse show" id="panel-body-1"
+                                            data-parent="#accordion">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="firstName">First name</label>
+                                                <input id="firstName" type="text"
+                                                       class="form-control" name="firstName"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="lastName">Last name</label>
+                                                <input id="lastName" type="text"
+                                                       class="form-control" name="lastName"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="users-from">From</label>
+                                                <input id="users-from" type="date"
+                                                       class="form-control" name="from"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="users-to">To</label>
+                                                <input id="users-to" type="date"
+                                                       class="form-control" name="to"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="button"
+                                                        onclick="loadUsersCount()"
+                                                        class="btn btn-primary btn-lg btn-block"
+                                                        tabindex="4" th:text="#{blt.apply.filters}">
+
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="accordion">
+                                    <div class="accordion-header" role="button" data-toggle="collapse"
+                                         data-target="#panel-body-2">
+                                        <h4>Accounts</h4>
+                                    </div>
+                                    <div class="accordion-body collapse" id="panel-body-2" data-parent="#accordion">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="accounts-email" th:text="#{user.email}"></label>
+                                                <input id="accounts-email" type="email" class="form-control"
+                                                       name="email"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="accounts-type">Account type</label>
+                                                <select id="accounts-type" class="form-control"
+                                                        name="type"
+                                                        tabindex="1" required autofocus>
+                                                    <option value="">
+                                                        Select
+                                                    </option>
+                                                    <option value="Personal Account">
+                                                        Personal Account
+                                                    </option>
+                                                    <option value="Business Account">
+                                                        Business Account
+                                                    </option>
+                                                    <option value="Savings Account">
+                                                        Savings Account
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="accounts-from">From</label>
+                                                <input id="accounts-from" type="date" class="form-control"
+                                                       name="from"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="accounts-to">To</label>
+                                                <input id="accounts-to" type="date" class="form-control"
+                                                       name="to"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="button"
+                                                        onclick="loadAccountsCount()"
+                                                        class="btn btn-primary btn-lg btn-block"
+                                                        tabindex="4" th:text="#{blt.apply.filters}">
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="accordion">
+                                    <div class="accordion-header" role="button" data-toggle="collapse"
+                                         data-target="#panel-body-3">
+                                        <h4>Transactions</h4>
+                                    </div>
+                                    <div class="accordion-body collapse" id="panel-body-3" data-parent="#accordion">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="transactions-email" th:text="#{user.email}"></label>
+                                                <input id="transactions-email" type="email" class="form-control"
+                                                       name="email"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transactions-account-type">Account type</label>
+                                                <select id="transactions-account-type"
+                                                        class="form-control" name="type"
+                                                        tabindex="1" required autofocus>
+                                                    <option value="">
+                                                        Select
+                                                    </option>
+                                                    <option value="Personal Account">
+                                                        Personal Account
+                                                    </option>
+                                                    <option value="Business Account">
+                                                        Business Account
+                                                    </option>
+                                                    <option value="Savings Account">
+                                                        Savings Account
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transactions-account-number"
+                                                >Account number</label>
+                                                <input id="transactions-account-number"
+                                                       type="text" class="form-control"
+                                                       name="account-type"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transactions-type">Transaction type</label>
+                                                <select id="transactions-type"
+                                                        class="form-control" name="type"
+                                                        tabindex="1" required autofocus>
+                                                    <option value="">
+                                                        Select
+                                                    </option>
+                                                    <option value="Withdrawal">
+                                                        Withdrawal
+                                                    </option>
+                                                    <option value="Transfer">
+                                                        Transfer
+                                                    </option>
+                                                    <option value="Deposit">
+                                                        Deposit
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transactions-from">From</label>
+                                                <input id="transactions-from" type="date"
+                                                       class="form-control"
+                                                       name="from"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transactions-to">To</label>
+                                                <input id="transactions-to" type="date"
+                                                       class="form-control"
+                                                       name="to"
+                                                       tabindex="1"
+                                                       required autofocus>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="button"
+                                                        onclick="loadTransactionsCount()"
+                                                        class="btn btn-primary btn-lg btn-block"
+                                                        tabindex="4" th:text="#{blt.apply.filters}">
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-danger">
+                                <i class="far fa-newspaper"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Accounts</h4>
+                                </div>
+                                <p id="accounts" class="card-body">
+
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-warning">
+                                <i class="far fa-file"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Transactions</h4>
+                                </div>
+                                <p id="transactions" class="card-body">
+
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_ADMIN')"
+                         class="col-lg-3 col-md-6 col-sm-6 col-12">
+                        <div class="card card-statistic-1">
+                            <div class="card-icon bg-success">
+                                <i class="fas fa-circle"></i>
+                            </div>
+                            <div class="card-wrap">
+                                <div class="card-header">
+                                    <h4>Users</h4>
+                                </div>
+                                <p id="users" class="card-body">
+
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
         <!-- Footer -->
         <footer th:replace="~{fragments/footerFragment::footer-section}"></footer>
         <!-- Js-links -->
         <div th:replace="~{fragments/footFragment::js-links}"></div>
     </div>
 </div>
+<script>
+    const baseUrl = '/atm/api/dashboard';
+    const roleUrl = '/atm/api/user-role';
+    // default values
+    let usersParams = {
+        firstName: '', lastName: '', from: '', to: ''
+    };
+    let accountsParams = {
+        email: '', type: '', from: '', to: ''
+    }
+    let transactionsParams = {
+        email: '', accountType: '', accountNumber: '',
+        transactionType: '', from: '', to: ''
+    }
+    // Default counts
+    loadCounts();
+
+    async function loadCounts() {
+        console.log(baseUrl + '/users')
+        console.log(baseUrl + '/accounts')
+        console.log(baseUrl + '/transactions')
+        try {
+            const roleResponse = await fetchAPI.get(roleUrl)
+            console.log("Role: " + roleResponse.role)
+            if (roleResponse.role === 'ROLE_USER') {
+                const data2 = await fetchAPI.get(baseUrl + '/accounts',
+                    accountsParams);
+                const data3 = await fetchAPI.get(baseUrl + '/transactions',
+                    transactionsParams);
+                document.getElementById('accounts').innerHTML = data2.accountsCount;
+                document.getElementById('transactions').innerHTML = data3.transactionsCount;
+                console.log("Data for users: " + data2.accountsCount + " | "
+                    + data3.transactionsCount)
+            } else {
+                const data1 = await fetchAPI.get(baseUrl + '/users',
+                    usersParams);
+                const data2 = await fetchAPI.get(baseUrl + '/accounts',
+                    accountsParams);
+                const data3 = await fetchAPI.get(baseUrl + '/transactions',
+                    transactionsParams);
+                document.getElementById('users').innerHTML = data1.usersCount;
+                document.getElementById('accounts').innerHTML = data2.accountsCount;
+                document.getElementById('transactions').innerHTML = data3.transactionsCount;
+                console.log("Data for admins: " + data1.usersCount + " | " + data2.accountsCount
+                    + " | " + data3.transactionsCount);
+            }
+        } catch (e) {
+            console.log(e.message);
+        }
+    }
+
+    // Load user count
+    async function loadUsersCount() {
+        console.log("user counts...")
+        usersParams = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            from: document.getElementById('users-from').value,
+            to: document.getElementById('users-to').value,
+        }
+        try {
+            const data = await fetchAPI.get(baseUrl + '/users', usersParams);
+            console.log("Received data", data.usersCount);
+            document.getElementById('users').innerHTML = data.usersCount;
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    // Load accounts count
+    async function loadAccountsCount() {
+        console.log("accounts counts...")
+        accountsParams = {
+            email: document.getElementById('accounts-email').value,
+            type: document.getElementById('accounts-type').value,
+            from: document.getElementById('accounts-from').value,
+            to: document.getElementById('accounts-to').value,
+        }
+        try {
+            const data = await fetchAPI.get(baseUrl + '/accounts', accountsParams);
+            console.log("Received data", data.accountsCount);
+            document.getElementById('accounts').innerHTML = data.accountsCount;
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    // Load transactions count
+    async function loadTransactionsCount() {
+        console.log("transactions counts...")
+        transactionsParams = {
+            email: document.getElementById('transactions-email').value,
+            accountType: document.getElementById('transactions-account-type').value,
+            accountNumber: document.getElementById('transactions-account-number').value,
+            transactionType: document.getElementById('transactions-type').value,
+            from: document.getElementById('transactions-from').value,
+            to: document.getElementById('transactions-to').value,
+        }
+        try {
+            const data = await fetchAPI.get(baseUrl + '/transactions', transactionsParams);
+            console.log("Received data", data.transactionsCount);
+            document.getElementById('transactions').innerHTML = data.transactionsCount;
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+</script>
 </body>
 </html>

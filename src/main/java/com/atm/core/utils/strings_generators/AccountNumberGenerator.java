@@ -20,12 +20,13 @@ public class AccountNumberGenerator {
 
     public String accountNumber() throws IOException {
         StringBuilder sb = new StringBuilder();
+        log.info("AccountNumberGenerator -> accountNumber() is running...");
         Random rand = new Random();
         Properties prop = configService.getProperties();
-//        log.info("Key - Value pairs: "+prop);
+        log.info("Key - Value pairs: "+prop);
         String leadNumber = prop.getProperty("account.lead.number");
         String tailNumber = prop.getProperty("account.tail.number");
-//        log.info("before generating account number: " + leadNumber + " " + tailNumber );
+        log.info("before generating account number: " + leadNumber + " " + tailNumber );
         sb.setLength(0);
         sb.append(leadNumber)
                 .append("-");

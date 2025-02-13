@@ -1,5 +1,6 @@
 package com.atm.core.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -13,12 +14,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class StaticResourceConfig implements WebMvcConfigurer {
+    // Change for Production or Local env
+    @Value("${static.resources.receipts.path}")
+    private String receiptsPath;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Serve files from an external directory (e.g., D:/files/receipts/)
         registry.addResourceHandler("/receipts/**")
-                .addResourceLocations("file:/D:/files/receipts/");
+                .addResourceLocations("file:" + receiptsPath);
     }
 }
 

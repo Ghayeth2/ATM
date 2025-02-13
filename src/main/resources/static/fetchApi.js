@@ -17,8 +17,14 @@ const fetchAPI = {
     },
 
     async post(url, params) {
+        // Construct full URL dynamically based on current host and protocol
+        const queryString = new URLSearchParams(params).toString();
+        const fullUrl = queryString
+            ? `${window.location.origin}${url}?${queryString}`
+            : `${window.location.origin}${url}`;
+
         try {
-            const response = await fetch(url, {
+            const response = await fetch(fullUrl, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",  // Tells the server we're sending JSON data
@@ -34,7 +40,8 @@ const fetchAPI = {
             console.error("Error in POST request:", error);
             throw error;
         }
-    },
+    }
+    ,
 
 
     async delete(url, params) {
