@@ -17,7 +17,7 @@ public class DateFormatConverter {
     public String formatDate(LocalDateTime date) {
         String formattedDate = null;
         try {
-            formattedDate = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss.SSSSSSSSS"));
+             formattedDate =  date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss"));
         } catch (DateTimeParseException e) {
             log.error("Date formatter exception: "+e.getMessage());
         }
@@ -39,16 +39,11 @@ public class DateFormatConverter {
 
     public LocalDateTime formatRequestDate(String date) {
         LocalDateTime res = null;
+        date = date + " 00:00:00";
         try {
-            // Check if the input date string doesn't include time, and append default time
-            if (date != null && date.length() == 10) { // Format 'yyyy-MM-dd'
-                date = date + " 00:00:00"; // Append default time
-            }
-
-            // Parse the date and time string
-            res = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            res =  LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         } catch (Exception e) {
-            log.error("Date exception: " + e.getMessage());
+            log.error("Date exception: "+e.getMessage());
         }
         return res;
     }

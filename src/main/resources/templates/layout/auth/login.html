@@ -85,6 +85,10 @@
                     <div class="mt-5 text-muted text-center">
                         Don't have an account? <a th:text="#{blt.signup}" th:href="@{/atm/registration}"></a>
                     </div>
+                    <div>
+                        Or Login with GitHub <a class="btn btn-outline-dark" 
+                        th:href="@{/oauth2/authorization/github}">GitHub</a>
+                    </div>
                     <div class="simple-footer">
                         <a th:href="@{/atm}" class="nav-link"><i class="fa-solid fa-house"></i>
                             <span th:text="#{blt.home}"></span></a>

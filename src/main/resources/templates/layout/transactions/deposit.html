@@ -27,7 +27,10 @@
                                     <!--Success message-->
                                     <div th:if="${success}">
                                         <div class="alert alert-success text-center" th:text="${success}"></div>
-                                    </div> <!--Username Exists Error-->
+                                    </div>
+                                    <div th:if="${exception}">
+                                        <div class="alert alert-danger text-center" th:text="${exception}"></div>
+                                    </div><!--Username Exists Error-->
                                     <div class="row">
                                         <div class="form-group col-6">
                                             <label for="receiverNumber">Receiver number</label>

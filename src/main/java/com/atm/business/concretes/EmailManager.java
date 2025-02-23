@@ -20,6 +20,7 @@ public class EmailManager implements EmailServices {
     @Value("${sendgrid.secret.key}")
     private String secretKey;
 
+
     @Override @SneakyThrows
     public void sendEmail(EmailDetails emailDetails) {
         // From email

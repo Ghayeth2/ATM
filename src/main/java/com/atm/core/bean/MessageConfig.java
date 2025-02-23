@@ -18,6 +18,7 @@ public class MessageConfig {
                 "classpath:validations/validations",
                 "classpath:sidebar_links/sidebar_links",
                 "classpath:tables/tables",
+                "classpath:dynamic-configs",
                 "classpath:successes/successes");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setFallbackToSystemLocale(false);

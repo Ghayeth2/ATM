@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <nav th:fragment="nav-section" class="navbar navbar-expand-lg main-navbar">
     <form class="form-inline mr-auto">
         <ul class="navbar-nav mr-3">
             <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
             <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i
-                    class="fas fa-search"></i></a></li>
+                        class="fas fa-search"></i></a></li>
         </ul>
         <div class="search-element">
-            <input class="form-control" id="searchQuery" type="text" placeholder="Search" aria-label="Search" data-width="250">
+            <input class="form-control" id="searchQuery" type="text" placeholder="Search" aria-label="Search"
+                data-width="250">
 
         </div>
     </form>
     <ul class="navbar-nav navbar-right">
 
         <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown"
-                                                     class="nav-link nav-link-lg message-toggle beep"><i
-                class="far fa-envelope"></i></a>
+                class="nav-link nav-link-lg message-toggle beep"><i class="far fa-envelope"></i></a>
             <div class="dropdown-menu dropdown-list dropdown-menu-right">
                 <div class="dropdown-header">Messages
                     <div class="float-right">
@@ -44,8 +43,7 @@
             </div>
         </li>
         <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown"
-                                                     class="nav-link notification-toggle nav-link-lg beep"><i
-                class="far fa-bell"></i></a>
+                class="nav-link notification-toggle nav-link-lg beep"><i class="far fa-bell"></i></a>
             <div class="dropdown-menu dropdown-list dropdown-menu-right">
                 <div class="dropdown-header">Notifications
                     <div class="float-right">
@@ -69,12 +67,23 @@
             </div>
         </li>
         <li class="dropdown">
-            <a href="#" data-toggle="dropdown"
-               class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 <img alt="image" th:src="@{assets/img/avatar/avatar-1.png}" class="rounded-circle mr-1">
-                <div sec:authorize="isAuthenticated()" class="d-sm-none d-lg-inline-block"
-                     sec:authentication="principal.username"></div>
+                <div th:if="${#authentication}" class="d-sm-none d-lg-inline-block">
+                    Welcome,
+                    <span
+                        th:if="${#authentication.principal instanceof T(org.springframework.security.core.userdetails.UserDetails)}"
+                        th:text="${#authentication.principal.username}">
+                        <!-- Display username for form-based authentication -->
+                    </span>
+                    <span
+                        th:if="${#authentication.principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)}"
+                        th:text="${#authentication.principal.attributes['login']}">
+                        <!-- Display GitHub username for OAuth2 authentication -->
+                    </span>
+                </div>
             </a>
+
 
             <div class="dropdown-menu dropdown-menu-right">
                 <a sec:authorize="isAuthenticated()" th:href="@{/atm/profile}" class="dropdown-item has-icon">
@@ -89,11 +98,13 @@
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
                 <div class="dropdown-divider"></div>
-                <a sec:authorize="!isAuthenticated()" th:href="@{/atm/registration}" class="dropdown-item has-icon text-primary">
+                <a sec:authorize="!isAuthenticated()" th:href="@{/atm/registration}"
+                    class="dropdown-item has-icon text-primary">
                     <i class="fa-solid fa-user-plus"></i> Sign up
                 </a>
             </div>
         </li>
     </ul>
 </nav>
+
 </html>

@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "sendgrid.secret.key",
+    "type": "java.lang.String",
+    "description": "A description for 'sendgrid.secret.key'"
+  },
+  {
+    "name": "verification.code.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'verification.code.expiration'"
+  },
+  {
+    "name": "server.local.host",
+    "type": "java.lang.String",
+    "description": "A description for 'server.local.host'"
+  },
+  {
+    "name": "server.remote.host",
+    "type": "java.lang.String",
+    "description": "A description for 'server.remote.host'"
+  },
+  {
+    "name": "static.resources.receipts.path",
+    "type": "java.lang.String",
+    "description": "A description for 'static.resources.receipts.path'"
+  },
+  {
+    "name": "transactions.receipts.path",
+    "type": "java.lang.String",
+    "description": "A description for 'transactions.receipts.path'"
+  }
+]}
